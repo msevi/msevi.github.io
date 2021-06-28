@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>qPCR on Home</title>
+    <link>/categories/qpcr/</link>
+    <description>Recent content in qPCR on Home</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 01 Jul 2019 00:00:00 +0000</lastBuildDate><atom:link href="/categories/qpcr/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Microbiological composition in DWS after Maria</title>
+      <link>/project/p2/</link>
+      <pubDate>Mon, 01 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/project/p2/</guid>
+      <description>Summary     Loss of basic utilities, such as drinking water and electricity distribution, were sustained for months in the aftermath of Hurricane Maria&amp;rsquo;s (HM) landfall in Puerto Rico (PR) in September 2017. The goal of this study was to assess if there was deterioration in biological quality of drinking water due to these disruptions. This study characterized the microbial composition of drinking water following HM across nine drinking water systems (DWSs) in PR and utilized an extended temporal sampling campaign to determine if changes in the drinking water microbiome were indicative of HM associated disturbance followed by recovery.</description>
+    </item>
+    
+  </channel>
+</rss>

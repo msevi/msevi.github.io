@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Disinfection on Home</title>
+    <link>/categories/disinfection/</link>
+    <description>Recent content in Disinfection on Home</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 01 Jul 2019 00:00:00 +0000</lastBuildDate><atom:link href="/categories/disinfection/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Antimicrobial Resistance in DWS</title>
+      <link>/project/p1/</link>
+      <pubDate>Mon, 01 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/project/p1/</guid>
+      <description>Summary     Antimicrobial resistance (AMR) in drinking water has received less attention than its counterparts in the urban water cycle. While culture-based techniques or gene-centric PCR have been used to probe the impact of treatment approaches (e.g., disinfection) on AMR in drinking water, to our knowledge there is no systematic comparison of AMR trait distribution and prevalence between disinfected and disinfectant residual-free drinking water systems. We used metagenomics to assess the associations between disinfectant residuals and AMR prevalence and its host association in full-scale drinking water distribution systems (DWDSs) with and without disinfectant residuals.</description>
+    </item>
+    
+  </channel>
+</rss>

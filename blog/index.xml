@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>A Blog That Works on Home</title>
+    <link>/blog/</link>
+    <description>Recent content in A Blog That Works on Home</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 28 Jun 2021 00:00:00 +0000</lastBuildDate><atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Resources</title>
+      <link>/blog/2021-06-28-resources/</link>
+      <pubDate>Mon, 28 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2021-06-28-resources/</guid>
+      <description>  This page will be updated continuously to highlight functions, packages, and presentations useful for R users.
+It will generally contain a brief description and links to tutorials or vignettes.
+If there’s something I’d love for you to learn more about I will create a separate blog post.
+Keep an eye out!
+Learn R  Visualization  Modeling  Rmarkdown  Shiny  </description>
+    </item>
+    
+    <item>
+      <title>Setting up my webpage</title>
+      <link>/blog/2021-06-25-setting-up-my-webpage/</link>
+      <pubDate>Fri, 25 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2021-06-25-setting-up-my-webpage/</guid>
+      <description>Aim The purpose of this markdown is to generate my own page and document the process for peers in my research group and others.
+ Scope In this document I will be following Allison Hill’s Up &amp;amp; running with blogdown in 2021 post. The steps here deviate a bit from her proposed 7 step guide, but I used it as a starting point. I will provide my own commentary and experience deploying a website from R for the first time.</description>
+    </item>
+    
+  </channel>
+</rss>

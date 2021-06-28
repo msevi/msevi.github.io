@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head>
+  
+                           
+     
+
+
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.84.0" />
+<title>Setting up my webpage | Home</title>
+
+
+<meta property="twitter:site" content="@katty_sevi">
+<meta property="twitter:creator" content="@katty_sevi">
+
+
+
+
+
+
+
+  
+    
+  
+<meta name="description" content="Create a website with Hugo&#39;s Apero theme using blogdown.">
+
+
+<meta property="og:site_name" content="Home">
+<meta property="og:title" content="Setting up my webpage | Home">
+<meta property="og:description" content="Create a website with Hugo&#39;s Apero theme using blogdown." />
+<meta property="og:type" content="page" />
+<meta property="og:url" content="/blog/2021-06-25-setting-up-my-webpage/" />
+<meta property="og:locale" content="en">
+
+
+
+
+    
+        <meta property="og:image" content="/blog/2021-06-25-setting-up-my-webpage/featured.jpeg" >
+        <meta property="twitter:card" content="summary_large_image">
+        <meta name="twitter:image" content="/blog/2021-06-25-setting-up-my-webpage/featured.jpeg" >
+    
+    
+  <meta itemprop="name" content="Setting up my webpage">
+<meta itemprop="description" content="Aim The purpose of this markdown is to generate my own page and document the process for peers in my research group and others.
+ Scope In this document I will be following Allison Hill’s Up &amp; running with blogdown in 2021 post. The steps here deviate a bit from her proposed 7 step guide, but I used it as a starting point. I will provide my own commentary and experience deploying a website from R for the first time."><meta itemprop="datePublished" content="2021-06-25T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-06-25T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="909"><meta itemprop="image" content="/blog/2021-06-25-setting-up-my-webpage/featured.jpeg">
+<meta itemprop="keywords" content="" />
+  
+  <!--[if IE]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="shortcut icon" href="/img/008.png" type="image/x-icon">
+  <link rel="icon" href="/img/008.png" type="image/x-icon">
+  
+  
+  <link rel="stylesheet" href="/style.main.min.73e736bd4383f8090e0c7bb46d2b9fe5208816195891be73629cff4d163878c9.css" integrity="sha256-c&#43;c2vUOD&#43;AkODHu0bSuf5SCIFhlYkb5zYpz/TRY4eMk=" media="screen">
+  
+  
+  <script src="/panelset.min.d74e921a1b9af2d938fdff19e433ba539cdb202961eddae2356a54199f0653ec.js" type="text/javascript"></script>
+  
+  
+  <script src="/main.min.38a0323c5b0bbb611c4874ba2d8fdaba57d20cc2b0d704b30250c235ba8b6d49.js" type="text/javascript"></script>
+</head>
+<body>
+      <div class="grid-container">
+<header class="site-header pt4 pb2 mb4 bb b--transparent ph5 headroom z-max" role="banner">
+  <nav class="site-nav db dt-l w-100" role="navigation">
+    <a class="site-brand db dtc-l v-mid link no-underline w-100 w-33-l tc tl-l" href="/" title="Home">
+      <span class="f4 fw7">Home</span>
+    </a>
+    <div class="site-links db dtc-l v-mid w-100 w-47-l tc tr-l mt3 mt0-l ttu tracked">
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/about/" title="About">About</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 active" href="/blog/" title="Blog">Blog</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/project/" title="Project Portfolio">Projects</a>
+      
+      
+    </div>
+  </nav>
+</header>
+
+<main class="page-main pa4" role="main">
+  <section class="page-content mw7 center">
+    <article class="post-content pa0 ph4-l">
+      <header class="post-header">
+        <h1 class="f1 lh-solid measure-narrow mb3 fw4">Setting up my webpage</h1>
+        
+        <p class="f6 measure lh-copy mv1">By Maria Sevillano</p>
+        <p class="f7 db mv0 ttu">June 25, 2021</p>
+
+      
+
+      </header>
+      <section class="post-body pt5 pb4">
+        
+<script src="/blog/2021-06-25-setting-up-my-webpage/index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="aim" class="section level2">
+<h2>Aim</h2>
+<p>The purpose of this markdown is to generate my own page and document the process for peers in my research group and others.</p>
+</div>
+<div id="scope" class="section level2">
+<h2>Scope</h2>
+<p>In this document I will be following <a href="https://alison.rbind.io/blog/2020-12-new-year-new-blogdown/">Allison Hill’s</a> <em>Up &amp; running with blogdown in 2021</em> post. The steps here deviate a bit from her proposed 7 step guide, but I used it as a starting point. I will provide my own commentary and experience deploying a website from R for the first time. <strong>Wish me luck!</strong></p>
+</div>
+<div id="background" class="section level2">
+<h2>Background</h2>
+<p>First, let’s take a second to describe the tools that will be used to generate the website:</p>
+<ul>
+<li><p>RStudio: Integrated development environment (IDE) for R.</p>
+<p>This is home! There are a few parts of the workbench we will use extensively: <em>source</em>, <em>console</em>, <em>terminal</em>, and <em>viewer</em> pane.</p>
+<p><img src="Screenshots/Screenshot_0.png" /></p></li>
+<li><p><a href="https://github.com/rstudio/blogdown">Blogdown</a> package:</p>
+<table>
+<colgroup>
+<col width="65%" />
+<col width="34%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><p>This package builds websites from Hugo themes in R.</p>
+<p>It allows you to generate a no nonsense website in minutes with straightforward functions.</p>
+<p>This is ideal to share data analyses and visualizations made in R.</p></td>
+<td><img src="Screenshots/blogdown_logo.png" width="89" /></td>
+</tr>
+</tbody>
+</table></li>
+<li><p><a href="https://gohugo.io/">Hugo</a>: open source static website generator.</p></li>
+<li><p>GitHub: provider of software hosting and version control through Git.</p>
+<p>We will use it to track changes for the website and host the page as well.</p></li>
+</ul>
+<hr />
+</div>
+<div id="step-1-define-your-brand" class="section level2">
+<h2>Step 1: Define your brand</h2>
+<p>Let’s take a few minutes to reflect on what type of site you are trying to build. Here are some guiding principles to map out your idea into a product.</p>
+<ol style="list-style-type: decimal">
+<li><p>Content</p>
+<p>What information do you want to showcase?</p>
+<p>What is the best format to present such information?</p>
+<p>Shop around for web templates supported by blogdown and get inspired by what’s out there. This will help you structure the sections to include in your page.</p></li>
+<li><p>Menu</p>
+<p>If you decide on a website with extensive content, pick out a few sections you want to highlight.</p>
+<p>An <strong>About me</strong> section is essential. Perhaps a tab containing your publications or projects might be relevant.</p>
+<p>The menu provides a guide to anyone interacting with your content. We want to make it easy for us to display what we want and for people to find it.</p>
+<p>However, we don’t want to overwhelm anyone, so as a rule of thumb, have at most 5 tabs in the navigation bar.</p></li>
+<li><p>Homepage</p>
+<p>This is the landing page for someone visiting the site, or the only page: choose your own adventure.</p>
+<p>You can present everything resume style or create a short introduction and allow the visitor to navigate your page (through your menu). I will go with the latter, but be intentional with the content shared here to entice the visitor to explore more.</p></li>
+</ol>
+<blockquote>
+<p><strong>We are now equipped with the basics to start creating!</strong></p>
+</blockquote>
+</div>
+<div id="step-2-create-your-github-repo" class="section level2">
+<h2>Step 2: Create your GitHub repo</h2>
+<ol style="list-style-type: decimal">
+<li><p>Create new repository in GitHub.</p>
+<p><img src="Screenshots/Screenshot_1.png" width="496" /></p></li>
+</ol>
+<p>I will be using github pages to host my site, hence the repo name.</p>
+<p>Alternatively, you can use other names for your repository and host with Netlifly.</p>
+<blockquote>
+<p><strong>Your GitHub Pages is <em>almost</em> set!</strong></p>
+</blockquote>
+</div>
+<div id="step-3-create-a-project-site" class="section level2">
+<h2>Step 3: Create a project &amp; site</h2>
+<ol style="list-style-type: decimal">
+<li>Install blogdown</li>
+</ol>
+<pre class="r"><code>install.packages(&quot;blogdown&quot;)</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li><p>Make site</p>
+<p>File &gt; New Project &gt; New Directory &gt; Website using blogdown</p>
+<p>Alternatively, once you have a directory set as an R project, you can generate the directory structure with:</p></li>
+</ol>
+<pre class="r"><code>blogdown::new_site(theme = &quot;yihui/hugo-lithium&quot;) </code></pre>
+<p>This theme corresponds to the github path were the theme is hosted. The <code>hugo-lithium</code> theme is the default theme and it has a very minimalist feel to it. However it is not too popular, and its very simple aesthetics is not what I’m looking for.</p>
+<p>I will generate my site with the <a href="https://hugo-apero-docs.netlify.app/"><code>hugo-apero</code></a> theme. It’s beautiful and well documented. Take a <a href="https://hugo-apero-docs.netlify.app/">look</a>!</p>
+<pre class="r"><code>blogdown::new_site(theme = &quot;hugo-apero/hugo-apero&quot;) </code></pre>
+<p>What happens?</p>
+<ol style="list-style-type: decimal">
+<li><p>It creates the theme’s file structure.</p>
+<p><img src="Screenshots/Screenshot_3.png" width="303" /></p></li>
+<li><p>It allows us to initiate the page locally and see changes live on your RStudio viewer pane.</p>
+<p><img src="Screenshots/Screenshot_4.png" /></p>
+<p>You can also preview the site using:</p></li>
+</ol>
+<pre class="r"><code>blogdown::serve_site() </code></pre>
+<p>My suggestion: restart R and serve site in between large changes.</p>
+<blockquote>
+<p><strong>We’ve created a template, let’s add/remove stuff!</strong></p>
+</blockquote>
+</div>
+<div id="step-4-add-content" class="section level2">
+<h2>Step 4: Add content</h2>
+<p>Using the function <code>blogdown::new_post</code> we’ll generate an Rmarkdown file inside the blog folder within the content directory</p>
+<pre class="r"><code>blogdown::new_post(title = &quot;Hi Hugo&quot;, 
+                     ext = &#39;.Rmd&#39;, 
+                     subdir = &quot;blog&quot;)</code></pre>
+<p><img src="Screenshots/Screenshot_5.png" width="671" /></p>
+<p><strong>Content creation workflow:</strong></p>
+<p>Knit file &gt; Make changes to Rmarkdown file &gt; re-knit</p>
+<p>For sanity checks, take a look at all <code>blogdown::check_*</code> commands.</p>
+<pre class="r"><code>blogdown::check_content()</code></pre>
+<blockquote>
+<p><strong>We’ve generated content and can go crazy with blogging now!</strong></p>
+</blockquote>
+</div>
+<div id="step-5-build-site" class="section level2">
+<h2>Step 5: Build site</h2>
+<p>The following command will generate the public directory that contains our website (what will be hosted by github pages)</p>
+<pre class="r"><code>blogdown::hugo_build()</code></pre>
+<p><img src="Screenshots/Screenshot_7.png" /></p>
+<p><img src="Screenshots/Screenshot_8.png" width="641" /></p>
+<p><strong>Website update workflow (local):</strong></p>
+<p><code>blogdown::new_post()</code> &gt; Knit file &gt; Make changes to Rmarkdown file &gt; re-Knit &gt; <code>blogdown::hugo_build()</code></p>
+</div>
+<div id="step-6-publish-your-site" class="section level2">
+<h2>Step 6: Publish your site</h2>
+<p>Control your versions and move your <code>public</code> directory to your repository.</p>
+<p>In the terminal:</p>
+<ol style="list-style-type: decimal">
+<li>Initiate git in the /personal_website/public/ folder</li>
+</ol>
+<p><code>git init</code></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Add and commit the changes</li>
+</ol>
+<p><code>git add .</code></p>
+<p><code>git commit -m "update website"</code></p>
+<p>*Remember to change the commit message 😀</p>
+<ol start="3" style="list-style-type: decimal">
+<li><p>Set origin (this step is done only once!)</p>
+<p><img src="Screenshots/Screenshot_9.png" width="277" /></p></li>
+</ol>
+<p><code>git remote add origin https://github.com/msevi/msevi.github.io.git</code></p>
+<ol start="4" style="list-style-type: decimal">
+<li>Push your updates online</li>
+</ol>
+<p><code>git push --set-upstream origin master</code></p>
+<p><strong>Website update workflow (remote):</strong></p>
+<p><code>blogdown::hugo_build() /&gt; git add /&gt; git commit /&gt; git push</code></p>
+<blockquote>
+<p><strong>Your website is now live!</strong></p>
+</blockquote>
+</div>
+<div id="step-7-get-your-site-in-proper-shape" class="section level2">
+<h2>Step 7: Get your site in proper shape</h2>
+<p>At this stage, your creative vision really shines. If your like me, you might spend a lot of time playing around to make the site really yours. Some CSS and HTML knowledge can be helpful here, if you had a myspace, this is a walk in the park 🤣 Your best friend, though, is google!</p>
+<hr />
+</div>
+<div id="with-these-steps-you-can-now-improve-your-online-presence." class="section level1">
+<h1><strong>With these steps you can now improve your online presence.</strong> 🎉</h1>
+</div>
+
+        
+        <details closed class="f6 fw7 input-reset">
+  <dl class="f6 lh-copy">
+    <dt class="fw7">Posted on:</dt>
+    <dd class="fw5 ml0">June 25, 2021</dd>
+  </dl>
+  <dl class="f6 lh-copy">
+    <dt class="fw7">Length:</dt>
+    <dd class="fw5 ml0">5 minute read, 909 words</dd>
+  </dl>
+  
+  
+  
+  <dl class="f6 lh-copy">
+    <dt class="fw7">See Also:</dt>
+    
+  </dl>
+</details>
+
+      </section>
+      <footer class="post-footer">
+        <div class="post-pagination dt w-100 mt4 mb2">
+  
+  
+    <a class="prev dtc pr2 tl v-top fw6"
+    href="/blog/2021-06-28-resources/">&larr; Resources</a>
+  
+  
+  
+</div>
+
+      </footer>
+    </article>
+    
+      
+<div class="post-comments pa0 pa4-l mt4">
+  
+  <script src="https://utteranc.es/client.js"
+          repo="apreshill/apero"
+          issue-term="pathname"
+          theme="boxy-light"
+          label="comments :crystal_ball:"
+          crossorigin="anonymous"
+          async
+          type="text/javascript">
+  </script>
+  
+</div>
+
+    
+  </section>
+</main>
+<footer class="site-footer pv4 bt b--transparent ph5" role="contentinfo">
+  <nav class="db dt-l w-100">
+    <p class="site-copyright f7 db dtc-l v-mid w-100 w-33-l tc tl-l pv2 pv0-l mv0 lh-copy">
+      &copy; 2021
+      <span class="middot-divider"></span>
+      Made with <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title"><a xmlns:dct="http://purl.org/dc/terms/" href="https://github.com/hugo-apero/" rel="dct:source">Hugo Apéro</a></span>.
+      <br />
+      
+Based on <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title"><a xmlns:dct="http://purl.org/dc/terms/" href="https://github.com/formspree/blogophonic-hugo" rel="dct:source">Blogophonic</a></span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://formspree.io" property="cc:attributionName" rel="cc:attributionURL">Formspree</a>.
+    </p>
+    
+    <div class="site-social-links db dtc-l v-mid w-100 w-33-l tc pv2 pv0-l mv0">
+      <div class="social-icon-links" aria-hidden="true">
+  
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="https://www.linkedin.com/in/maria-sevillano-rivera" title="linkedin" target="_blank" rel="noopener">
+      <i class="fab fa-linkedin fa-lg fa-fw"></i>
+    </a>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="https://github.com/msevi" title="github" target="_blank" rel="noopener">
+      <i class="fab fa-github fa-lg fa-fw"></i>
+    </a>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="https://orcid.org/0000-0003-0230-0624" title="orcid" target="_blank" rel="noopener">
+      <i class="ai ai-orcid fa-lg fa-fw"></i>
+    </a>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="http://scholar.google.com/citations?user=IMacHjAAAAAJ&amp;hl=en&amp;authuser=3" title="google-scholar" target="_blank" rel="noopener">
+      <i class="ai ai-google-scholar fa-lg fa-fw"></i>
+    </a>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="https://msevi.github.io/files/Sevillano_CV_2021.pdf" title="cv" target="_blank" rel="noopener">
+      <i class="ai ai-cv fa-lg fa-fw"></i>
+    </a>
+  
+</div>
+
+    </div>
+    
+    <div class="site-links f6 db dtc-l v-mid w-100 w-67-l tc tr-l pv2 pv0-l mv0">
+      
+      <a class="dib pv1 ph2 link" href="/license/" title="License">License</a>
+      
+      <a class="dib pv1 ph2 link" href="/contact/" title="Contact form">Contact</a>
+      
+    </div>
+  </nav>
+</footer>
+
+      </div>
+    </body>
+</html>
