@@ -6,7 +6,17 @@
     <description>Recent content in Maria Sevillano on Home</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 28 Jun 2021 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 01 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Website content creation nugget 1</title>
+      <link>/blog/2021-07-01-content-creation-nugget-1/</link>
+      <pubDate>Thu, 01 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2021-07-01-content-creation-nugget-1/</guid>
+      <description>TL;DR: The objective of this post is to reflect on how we write and to set up a template to reuse in future blog posts.
+ Tips for blog post writing Writing research papers is not the same as writing academic blogs. The former is more prescriptive, limited to a number of characters, and usually constrained to 4-5 figures and tables (sure, we can go crazy in the supplementary material, but there’s a reason why it’s supplementary … ).</description>
+    </item>
+    
     <item>
       <title>Resources</title>
       <link>/blog/2021-06-28-resources/</link>
@@ -21,7 +31,7 @@ Learn R  Visualization  Modeling  Rmarkdown  Shiny  </description>
     </item>
     
     <item>
-      <title>Setting up my webpage</title>
+      <title>Setting up my webpage - you can do it too!</title>
       <link>/blog/2021-06-25-setting-up-my-webpage/</link>
       <pubDate>Fri, 25 Jun 2021 00:00:00 +0000</pubDate>
       
