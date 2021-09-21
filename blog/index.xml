@@ -6,14 +6,15 @@
     <description>Recent content in A Blog That Works on Home</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 19 Aug 2021 00:00:00 +0000</lastBuildDate><atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 19 Sep 2021 00:00:00 +0000</lastBuildDate><atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>This is a test</title>
-      <link>/blog/2021-08-19-this-is-a-test/</link>
-      <pubDate>Thu, 19 Aug 2021 00:00:00 +0000</pubDate>
+      <title>Graph theory primer</title>
+      <link>/blog/2021-07-01-graph-theory/</link>
+      <pubDate>Sun, 19 Sep 2021 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2021-08-19-this-is-a-test/</guid>
-      <description>  Aim  Scope  Background  Libraries  Data wrangling  Analyses  Plots  </description>
+      <guid>/blog/2021-07-01-graph-theory/</guid>
+      <description>Aim In this blogpost, I will review foundational concepts underlying co-occurrence networks and apply them to visualize a drinking water metagenome dataset.
+ Scope The information discussed in the “Background” section is in part a summary of the “Graph Theory for Data Science” workshop series taught by Stanford University PhD student Julia Olivieri, as a part of Women in data science workshop series. Her workshops are available on youtube and consist of the three parts:</description>
     </item>
     
     <item>

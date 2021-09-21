@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head>
+  
+                           
+     
+
+
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.84.0" />
+<title>Graph theory primer | Home</title>
+
+
+<meta property="twitter:site" content="@katty_sevi">
+<meta property="twitter:creator" content="@katty_sevi">
+
+
+
+
+
+
+
+  
+    
+  
+<meta name="description" content="Co-occurrence networks in drinking water microbiomes.">
+
+
+<meta property="og:site_name" content="Home">
+<meta property="og:title" content="Graph theory primer | Home">
+<meta property="og:description" content="Co-occurrence networks in drinking water microbiomes." />
+<meta property="og:type" content="page" />
+<meta property="og:url" content="/blog/2021-07-01-graph-theory/" />
+<meta property="og:locale" content="en">
+
+
+
+
+    
+        <meta property="og:image" content="/blog/2021-07-01-graph-theory/featured.jpeg" >
+        <meta property="twitter:card" content="summary_large_image">
+        <meta name="twitter:image" content="/blog/2021-07-01-graph-theory/featured.jpeg" >
+    
+    
+  <meta itemprop="name" content="Graph theory primer">
+<meta itemprop="description" content="Aim In this blogpost, I will review foundational concepts underlying co-occurrence networks and apply them to visualize a drinking water metagenome dataset.
+ Scope The information discussed in the “Background” section is in part a summary of the “Graph Theory for Data Science” workshop series taught by Stanford University PhD student Julia Olivieri, as a part of Women in data science workshop series. Her workshops are available on youtube and consist of the three parts:"><meta itemprop="datePublished" content="2021-09-19T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-09-19T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="3202"><meta itemprop="image" content="/blog/2021-07-01-graph-theory/featured.jpeg">
+<meta itemprop="keywords" content="" />
+  
+  <!--[if IE]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="shortcut icon" href="/img/008.png" type="image/x-icon">
+  <link rel="icon" href="/img/008.png" type="image/x-icon">
+  
+  
+  <link rel="stylesheet" href="/style.main.min.73e736bd4383f8090e0c7bb46d2b9fe5208816195891be73629cff4d163878c9.css" integrity="sha256-c&#43;c2vUOD&#43;AkODHu0bSuf5SCIFhlYkb5zYpz/TRY4eMk=" media="screen">
+  
+  
+  <script src="/panelset.min.d74e921a1b9af2d938fdff19e433ba539cdb202961eddae2356a54199f0653ec.js" type="text/javascript"></script>
+  
+  
+  <script src="/main.min.38a0323c5b0bbb611c4874ba2d8fdaba57d20cc2b0d704b30250c235ba8b6d49.js" type="text/javascript"></script>
+</head>
+<body>
+      <div class="grid-container">
+<header class="site-header pt4 pb2 mb4 bb b--transparent ph5 headroom z-max" role="banner">
+  <nav class="site-nav db dt-l w-100" role="navigation">
+    <a class="site-brand db dtc-l v-mid link no-underline w-100 w-33-l tc tl-l" href="/" title="Home">
+      <span class="f4 fw7">Home</span>
+    </a>
+    <div class="site-links db dtc-l v-mid w-100 w-47-l tc tr-l mt3 mt0-l ttu tracked">
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/about/" title="About">About</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 active" href="/blog/" title="Blog">Blog</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/project/" title="Project Portfolio">Projects</a>
+      
+      
+    </div>
+  </nav>
+</header>
+
+<main class="page-main pa4" role="main">
+  <section class="page-content mw7 center">
+    <article class="post-content pa0 ph4-l">
+      <header class="post-header">
+        <h1 class="f1 lh-solid measure-narrow mb3 fw4">Graph theory primer</h1>
+        
+        <p class="f6 measure lh-copy mv1">By Maria Sevillano</p>
+        <p class="f7 db mv0 ttu">September 19, 2021</p>
+
+      
+      <div class="ph0 pt5">
+        
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+      
+  <a class="btn-links mr2 ba dib" href="https://msevi.github.io/files/Network_analyses.pdf" target="_blank" rel="noopener"><i class="fas fa-images fa-lg fa-fw mr2"></i>slides</a>
+
+
+      </div>
+      
+
+      </header>
+      <section class="post-body pt5 pb4">
+        
+<script src="/blog/2021-07-01-graph-theory/index_files/header-attrs/header-attrs.js"></script>
+<script src="/blog/2021-07-01-graph-theory/index_files/htmlwidgets/htmlwidgets.js"></script>
+<link href="/blog/2021-07-01-graph-theory/index_files/vis/vis.css" rel="stylesheet" />
+<script src="/blog/2021-07-01-graph-theory/index_files/vis/vis.min.js"></script>
+<script src="/blog/2021-07-01-graph-theory/index_files/visNetwork-binding/visNetwork.js"></script>
+
+
+<div id="aim" class="section level2">
+<h2>Aim</h2>
+<p>In this blogpost, I will review foundational concepts underlying co-occurrence networks and apply them to <strong>visualize</strong> a drinking water metagenome dataset.</p>
+</div>
+<div id="scope" class="section level2">
+<h2>Scope</h2>
+<p>The information discussed in the “Background” section is in part a summary of the “Graph Theory for Data Science” workshop series taught by Stanford University PhD student <a href="https://github.com/juliaolivieri">Julia Olivieri</a>, as a part of <a href="https://www.widsconference.org/workshops.html">Women in data science workshop series</a>. Her workshops are available on youtube and consist of the three parts:</p>
+<ul>
+<li><p>Part I: <a href="https://www.youtube.com/watch?v=KlzWjdaXYgA">What is a graph and What Can We Do With It?</a></p></li>
+<li><p>Part II: <a href="https://www.youtube.com/watch?v=45jNuN4DtPM&amp;list=PLHAk3jHXWpxI7fHw8m5PhrpSRpR3NIjQo&amp;index=3">Graph Algorithms: Traversing the tree and beyond</a></p></li>
+<li><p>Part III: <a href="">Characterizing Graphs in the Real World</a></p></li>
+</ul>
+<p>In May 2019, I was one of the workshop organizers for Meta-omics in Environmental Engineering Research at the Association of Environmental Engineering and Science Professors (AEESP) conference. The slides I presented there are shared within this post as well.</p>
+<p>Additionally, the plugging <a href="https://doi.org/doi:%2010.12688/f1000research.9050.2">CoNet</a> in the Cytoscape application will be used to infer associations between metagenome assembled genomes (MAGs) from drinking water systems.</p>
+<p>The main objective of this post is to use R packages to describe and visualize the network.</p>
+</div>
+<div id="background" class="section level2">
+<h2>Background</h2>
+<p><strong>Graphs</strong> are structures that represent relationships between things.</p>
+<p>The formal definition of a graph, G is</p>
+<p><span class="math display">\[
+G = (v,E)
+\]</span></p>
+<p>the set of <strong>vertices</strong>, v (i.e., nodes), and <strong>edges</strong>, E (i.e., links) such that v is finite and non-empty and each element of E is a two-element subset of v.</p>
+<p>In order to describe the topology of the graph we rely on different scores. Centrality measures, for example, are useful to determine the importance of nodes and edges compared to the remaining components of the graph.</p>
+<div class="panelset">
+<div class="panel">
+<p><span class="panel-name">Definitions</span></p>
+<p>At the most basic level, the <strong>degree</strong> of a vertex gives an indication of how “central” it is, and how it connects to others. We just count the connections to a node and voila. This is a local measure that is easy to calculate and high degree nodes are considered “hubs”. However, the inability to uniquely rank nodes is very likely.</p>
+<p>Alternatively, global connectivity measures consider the node’s neighbors. One such measure is <strong>eigencentrality</strong> (i.e., eigenvector centrality). This score accounts for the degree of the node as well as the degree of connected nodes (i.e., neighbors). The relative centrality score of vertex v with neighbor t can be defined as:</p>
+<p><span class="math display">\[
+x_v = \frac{1}{\lambda}\sum_{t{\in}M(v)}x_t
+\]</span></p>
+<p>where M(v) is a set of the neighbors of v and is a constant.</p>
+<p>Other global scores that are more widely used are <strong>closeness centrality</strong> and <strong>betweenness centrality</strong>, both of which rely on path length information. <strong>Closeness centrality</strong> is a measure of how close a vertex is to the other vertices by summing the shortest path distances. Formally,</p>
+<p><span class="math display">\[
+\frac{N-1}{\sum_{j}  d(i,j)}
+\]</span></p>
+<p>where N is the number of nodes. It is the reciprocal of the average shortest path length.</p>
+<p>Alternatively, <strong>betweenness centrality</strong> scores place emphasis on the shortest path a node is part of. Higher scores correspond to nodes that are gatekeepers of information flow. It is defined as follows:</p>
+<p><span class="math display">\[
+\sum_{j&lt;k}  \frac{g_{jk}(n_i)} {g_{jk}}
+\]</span></p>
+</div>
+<div class="panel">
+<p><span class="panel-name">Vocabulary</span></p>
+<ul>
+<li>walk: sequence of vertices connected by edges.</li>
+<li>trail: walk with no repeated edges.</li>
+<li>cycle: non-empty trail that starts and ends at the same vertex.</li>
+<li>connected: if a vertex can be reached from any other vertex through a walk.</li>
+<li>tree: a connected graph that doesn’t contain any cycles.</li>
+<li>degree: number of edges connected to vertex.</li>
+<li>sub-graph: subset of vertices and corresponding edges.</li>
+<li>complete graph: contains an edge between every pair of vertices (degree of each vertex in n-1, where n is the number of vertices).</li>
+<li>clique: the largest complete sub-graph.</li>
+<li>adjacency matrix: matrix with rows and columns labeled by graph vertices, with a 1 or 0 in position (v_i,v_j) according to whether v_i and v_j are adjacent or not.</li>
+</ul>
+</div>
+</div>
+<p>There are multiple types of graphs that we might be familiarized with. For example, <strong>phylogenetic trees</strong> show ancestral relationships between taxa, <strong>chemical structures</strong> show connection between molecules, and <strong>co-occurrence networks</strong> are representations of the relationships between biological entities within a context. In this post, I will be describing the co-ocurrence network of metagenomes from drinking water systems.</p>
+<p>There are a few tools at our disposal for co-occurrence inference from sequencing data, but I’m more familiar with <a href="https://psbweb05.psb.ugent.be/conet/index.php"><strong>CoNet</strong></a>. This tool detects non-random patterns of co-occurrence in presence/absence and abundance data based on user selected thresholds.</p>
+<p>The general workflow is:</p>
+<ol style="list-style-type: decimal">
+<li><p>Preprocessing</p>
+<p>raw data matrix is processed by removing rare taxa, and normalizing counts</p></li>
+<li><p>Edge score computation</p>
+<p>pairwise scoring using a range of measures (i.e., ensemble method) to capture different types of relationships</p></li>
+<li><p>Significance assessment</p>
+<p>Computation of p-value using a Z-test, comparing the permutation distribution mean given the bootstrap distribution</p></li>
+</ol>
+<p>CoNet runs on command line and as a <a href="http://www.cytoscape.org/">Cytoscape</a> plugin, there is also an <a href="https://github.com/ramellose/CoNetinR">R implementation</a>, but is not on CRAN or continuously maintained.</p>
+</div>
+<div id="libraries" class="section level2">
+<h2>Libraries</h2>
+<pre class="r"><code>library(tidyverse)
+library(visNetwork)
+library(igraph)</code></pre>
+</div>
+<div id="data-wrangling" class="section level2">
+<h2>Data wrangling</h2>
+<p>The tables resulting from the CoNet workflow require minimal wrangling. Here’s a sneak peak of the node and edge tables, respectively.</p>
+<pre><code>## # A tibble: 6 x 2
+##   id      value
+##   &lt;chr&gt;   &lt;dbl&gt;
+## 1 DW01178    22
+## 2 DW01233    20
+## 3 DW01231    20
+## 4 DW01139    20
+## 5 DW01202    19
+## 6 DW01177    18</code></pre>
+<pre><code>## # A tibble: 6 x 5
+##   from    to      weight interactionType color  
+##   &lt;chr&gt;   &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;  
+## 1 DW01142 DW01102      0 copresence      #00b300
+## 2 DW01132 DW01177      0 copresence      #00b300
+## 3 DW01235 DW01225      0 copresence      #00b300
+## 4 DW01178 DW01202      0 copresence      #00b300
+## 5 DW01233 DW01138      0 copresence      #00b300
+## 6 DW00423 DW00424      0 copresence      #00b300</code></pre>
+</div>
+<div id="analyses" class="section level2">
+<h2>Analyses</h2>
+<p>A high level summary of network metrics are shown below:</p>
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#vvzeqzlcsm .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#vvzeqzlcsm .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#vvzeqzlcsm .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#vvzeqzlcsm .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#vvzeqzlcsm .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#vvzeqzlcsm .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#vvzeqzlcsm .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#vvzeqzlcsm .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#vvzeqzlcsm .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#vvzeqzlcsm .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#vvzeqzlcsm .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#vvzeqzlcsm .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#vvzeqzlcsm .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#vvzeqzlcsm .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#vvzeqzlcsm .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#vvzeqzlcsm .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#vvzeqzlcsm .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#vvzeqzlcsm .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vvzeqzlcsm .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#vvzeqzlcsm .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vvzeqzlcsm .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#vvzeqzlcsm .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#vvzeqzlcsm .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#vvzeqzlcsm .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#vvzeqzlcsm .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#vvzeqzlcsm .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#vvzeqzlcsm .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#vvzeqzlcsm .gt_left {
+  text-align: left;
+}
+
+#vvzeqzlcsm .gt_center {
+  text-align: center;
+}
+
+#vvzeqzlcsm .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#vvzeqzlcsm .gt_font_normal {
+  font-weight: normal;
+}
+
+#vvzeqzlcsm .gt_font_bold {
+  font-weight: bold;
+}
+
+#vvzeqzlcsm .gt_font_italic {
+  font-style: italic;
+}
+
+#vvzeqzlcsm .gt_super {
+  font-size: 65%;
+}
+
+#vvzeqzlcsm .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="vvzeqzlcsm" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="2" class="gt_heading gt_title gt_font_normal" style><strong>Network properties</strong></th>
+    </tr>
+    <tr>
+      <th colspan="2" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>Global information</th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">property</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_left">Clustering coefficient</td>
+      <td class="gt_row gt_right">0.329</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Connected components</td>
+      <td class="gt_row gt_right">30.000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Network diameter</td>
+      <td class="gt_row gt_right">15.000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Network radius</td>
+      <td class="gt_row gt_right">1.000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Network centralization</td>
+      <td class="gt_row gt_right">0.076</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Characteristic path length</td>
+      <td class="gt_row gt_right">5.012</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Number of nodes</td>
+      <td class="gt_row gt_right">232.000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Average degree</td>
+      <td class="gt_row gt_right">4.517</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Network density</td>
+      <td class="gt_row gt_right">0.020</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+<p>For a comprehensive description of metrics and their interpretation, take a look a <a href="https://med.bioinf.mpi-inf.mpg.de/netanalyzer/help/2.6.1/">this</a> site.</p>
+<p>Let’s see what the network looks like!</p>
+<div id="htmlwidget-1" style="width:672px;height:480px;" class="visNetwork html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"nodes":{"id":["DW01178","DW01233","DW01231","DW01139","DW01202","DW01177","DW01145","DW01138","DW01155","DW01103","DW01244","DW01232","DW01104","DW01228","DW01243","DW01176","DW00384","DW01220","DW01108","DW01230","DW01132","DW00626","DW00850","DW00270","DW01166","DW00394","DW00400","DW01225","DW01234","DW00426","DW01282","DW00424","DW00520","DW00853","DW00388","DW01236","DW00988","DW00462","DW01169","DW00428","DW00427","DW00440","DW00704","DW00395","DW00377","DW00684","DW00856","DW01219","DW01252","DW01122","DW00392","DW00479","DW00345","DW00401","DW01240","DW00627","DW01046","DW00808","DW00242","DW01235","DW01269","DW01179","DW00271","DW00762","DW01297","DW00796","DW01256","DW00989","DW00807","DW00477","DW00347","DW00098","DW01102","DW00672","DW01287","DW01197","DW01118","DW00813","DW00978","DW00701","DW01198","DW01164","DW01293","DW01199","DW00703","DW01281","DW01147","DW00778","DW00391","DW00463","DW00423","DW01168","DW00425","DW01142","DW00812","DW00826","DW01153","DW01146","DW01254","DW01212","DW00963","DW00329","DW01127","DW01190","DW01223","DW00445","DW00127","DW01152","DW00589","DW00393","DW00573","DW00499","DW00691","DW00333","DW00576","DW00289","DW01216","DW00570","DW01158","DW01148","DW01038","DW01183","DW01094","DW01203","DW00679","DW00640","DW00655","DW00403","DW01157","DW01263","DW00641","DW01283","DW01161","DW00151","DW00146","DW01186","DW01129","DW00232","DW00805","DW00803","DW00706","DW00577","DW00219","DW01154","DW01043","DW00972","DW00274","DW00257","DW01125","DW00893","DW00736","DW00290","DW01217","DW00957","DW01270","DW00065","DW00080","DW00888","DW00434","DW00887","DW00421","DW00730","DW00497","DW00534","DW01253","DW01021","DW00571","DW00959","DW01115","DW00962","DW00806","DW00809","DW01242","DW00927","DW00919","DW00822","DW00273","DW01173","DW01174","DW00849","DW00980","DW00985","DW00140","DW00408","DW00409","DW01238","DW01239","DW00506","DW00504","DW01211","DW00979","DW00976","DW00171","DW01058","DW00207","DW00606","DW01200","DW01003","DW00668","DW00404","DW00961","DW01207","DW00631","DW00288","DW00247","DW00362","DW00414","DW00651","DW00087","DW00060","DW01137","DW01011","DW01130","DW00965","DW00209","DW01110","DW01111","DW00204","DW01036","DW01057","DW01204","DW01286","DW00450","DW00875","DW01227","DW01185","DW01224","DW00233","DW01201","DW00206","DW00764","DW00787"],"value":[22,20,20,20,19,18,18,18,17,16,16,15,15,15,14,13,13,13,12,12,11,11,11,11,11,11,10,10,10,10,10,10,9,9,9,9,9,9,9,9,9,9,9,8,8,8,8,8,8,8,8,8,7,7,7,7,7,7,7,7,7,6,6,6,6,6,6,6,6,5,5,5,5,5,5,5,5,5,5,5,5,4,4,4,4,4,4,4,4,4,4,4,4,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"x":[-0.658391095421414,-0.743600323778399,-0.66579639929805,-0.629603438057358,-0.707503042363455,-0.712613022250212,-0.721260719848663,-0.741436473949859,-0.673030748244735,-0.645945009415817,-0.672239410253637,-0.778492779688188,-0.671081956564416,-0.748052687574085,-0.640606471693343,-0.738492928381893,-0.11751157886714,-0.641460721455246,-0.646881949934163,-0.852790946522468,-0.668920250682604,0.536129316269382,-0.144776090419394,0.603039281151024,-0.615636991603121,-0.0427533719667657,-0.0165202008585137,-0.816208056370845,-0.776426445899507,0.332925239694781,-0.0927332249460306,0.340908726284898,-0.337381708072451,-0.0808878735180115,-0.075188725299309,-0.660765417022281,0.410544874648576,0.488154572567523,-0.602029166886503,0.477106154880545,0.393831805472405,0.368481661964229,-0.0312249640558816,-0.111150250523227,-0.0438456443892006,-0.715909509956581,-0.072749692561639,-0.626535346740717,-0.369557410910122,-0.648079412293292,-0.116707530224029,0.458509167627962,-0.00388325244119869,-0.146427579088068,-0.667793779934508,0.600071616581138,0.548225970416532,-0.0230270520828095,-0.597118061923494,-0.811198965165185,-0.424399307780257,-0.580568227519207,0.50450104865511,0.581726951794385,-0.434354957476222,0.545122427987036,-0.427084218769403,0.218861710260292,0.00437963131353336,0.231113259999641,0.274567982900963,0.492405075770305,-0.505312171376932,-0.908653076812153,-0.358286886702033,-0.507301219492679,-0.541725067373436,-0.272609808903645,0.700236310742791,0.0384793678501312,-0.638244582913809,-0.577743297719413,-0.433248311757256,-0.573430488472771,-0.892903403250238,-0.380183167618736,0.360901917732923,0.351916076517038,-0.0634129668701506,0.634905527508163,0.397325357744516,-0.587730363528826,0.357124664046455,-0.460764300537965,-0.00534016191304409,-0.360383996525953,0.314158636054182,0.211064118705325,-0.119438757911828,-0.733402541869008,0.219563920348422,0.471080940315134,-0.705129023433111,-0.962070940023735,-0.923639604657493,-0.746090304197535,-0.285184757414051,0.417281306561121,0.0940269487887562,0.0232037355145798,0.855677426591203,0.823368605135256,-0.477902016045757,0.41034367401745,-0.560830717659904,0.19785619763992,-0.786019517320122,0.516975718817406,-0.681866475620442,0.370025042290773,0.485612315421193,-0.887121441804966,0.74121891850816,0.771663907022788,0.706017734343863,-0.0369957523956614,-0.0889761672345327,0.132996066563835,0.470528822694583,-0.15797981647671,-0.101397459204757,-0.337017984603261,-1,-0.348485503008566,-0.279269238443836,0.475515866264655,0.745633282970234,-0.0344752876778615,0.0880829166674557,-0.0895889754381584,0.113390159856494,0.897786033710455,0.840950798926067,-0.0735911423997165,-0.430002886169421,0.348830071377978,0.820804780994436,0.883122618086431,-0.923833004333577,0.48617001560952,0.492867473152105,0.135694090996958,-0.7649888319318,0.145445897210926,-0.0480401762107635,-0.230178755597262,-0.305109959853759,-0.49551033999605,0.785675682834066,0.721738841811392,0.557896073067861,0.405620072793893,0.502288367061176,0.564296468803886,-0.346908671468697,0.634445467142971,0.615064253715965,0.233913800857815,-0.70694454229504,0.245053274027872,0.626989847998976,0.66266955151081,-0.872685521679198,0.351918847479215,0.353923731500303,-0.179444692402114,0.262494592605305,-0.119704043851011,-0.0865361461601034,-0.29145142129683,0.945000782699387,0.978212520009679,-0.242060029766672,0.877242437505461,0.893341626324663,0.622319458938376,0.63459269966105,0.872970999023967,0.803259834906998,-0.717268717367461,0.0282260132678303,-0.00504734849863953,0.737905988264469,0.700340893598811,0.41665257399191,0.107119134422044,-0.675127286656109,-0.0734926055339342,0.0369549764727271,0.144644858992986,-0.547547090996712,-0.281823810948199,0.677180588810861,0.388661992035693,0.337071233999293,0.182260422376084,-0.801904210293203,0.715839963166838,-0.0445546400571833,0.0239787391553532,-0.803459527373642,-0.279317363115295,1,0.993460344148814,0.504013737288262,0.0362063838239044,0.075132227634362,0.819839044555233,0.610052147004426,-0.349497601471314,-0.982194053826466,-0.550621712095462,0.539092890144838,0.660155230986373,0.111973557978274,0.815098942200496,-0.640447521365139,-0.0511414307315632,-0.38460319741742,0.917486272254887,-0.385926167259502,-0.309850110902025],"y":[-0.239769007482197,-0.145916673715258,-0.150569163730344,-0.261474078814769,-0.287506516595537,-0.205554342912137,-0.225821731406832,-0.0856213234995061,-0.192370133112728,-0.335861655315393,-0.307225675124301,-0.182366605323999,-0.272486427000441,-0.178811888781678,-0.289206362076221,-0.277222463245389,-0.223005298644392,-0.0125128744461529,0.240260101179498,-0.027925269836742,-0.367161689924519,-0.488355397786514,-0.261209609897585,-0.511882731535454,-0.207430996597609,-0.228376934709591,-0.161845110526177,-0.0861566442217995,-0.105452496317496,-0.781117347700068,-0.0402212370321885,-0.717248539728993,-0.152792905045439,-0.371352034769716,-0.204652311311574,-0.0856358584576968,-0.712343156250029,-0.61116610500631,0.242708816108379,-0.641685948896837,-0.763443489742757,-0.696302557694631,-0.098182068017405,-0.314823701056029,-0.325091000058147,-0.125048317521672,-0.291808868410545,0.0610212977056517,0.724080427972461,0.106403504409419,-0.387649673317002,-0.598256990924048,0.189287912289325,-0.166843883175005,-0.426976080195081,-0.424790339032797,-0.405686124112281,-0.0152047948016973,-0.36208165440906,7.82831375580884e-05,0.697149738113549,-0.283492127017638,-0.53259208709091,-0.45974978311397,0.737724197432346,-0.707749883450843,0.595889616148245,-0.807402304168135,-0.0572739818177991,-0.744203956320569,-0.796502617422762,-0.460810189955863,0.415505792847295,0.145338289948971,0.769676818952971,0.153041669247282,0.334465888116753,0.726210557320166,-0.474973223799307,-0.0820740066122279,0.152109229975758,-0.525846820986826,0.784157249263553,0.169388095171742,-0.115209109997452,0.670353514026727,-0.078050840398953,-0.823063615643581,-0.508998764233001,-0.366827211807497,-0.820610690626732,0.361207220408097,-0.63015149549617,0.314966866286084,0.051305551071412,0.83558363321346,-0.0351986492360391,-0.115854584752605,-0.490947892161922,0.443658833578447,0.697996167399298,-0.806485693116684,0.243098015894059,0.0945047244640493,-0.00486528937780206,-0.441401288237519,-0.807842284495332,-0.031172459459331,0.355004808154709,-0.295333738150659,-0.088604309369573,-0.140968209180341,-0.644601019526546,0.584249239568775,-0.689368599290203,0.936403904503711,0.566121073358433,-0.357134904823492,0.335123666184601,0.0245149406095209,0.605624193438594,-0.179706538888975,-0.390463897314119,0.493437619828672,0.488570682376807,-0.836800004706965,-0.878115247588003,-0.774255123185999,-0.0636159856521381,0.685814788533785,-0.812259280751454,0.599155285936291,0.0403090820419132,-0.859272164891398,-0.873066367886771,0.77779944389392,0.431657045119593,0.35972107349054,-0.00714173148469044,0.0408597597401523,-0.104854480090329,-0.142842219209636,-0.313497971255635,0.281019306195356,-0.731094426801585,0.541709006213362,0.179216798872343,0.165801450986815,0.290258633801989,0.28888358337691,0.217213775750936,0.963895484384442,0.658874282325184,0.679425660696458,-0.621450523720499,-0.986126374693247,-0.98002897241776,-0.360470235902087,0.6225610278547,0.63240031482479,0.61460731467575,-0.41674838196412,0.449031367522535,0.470726875744123,0.526384590595191,0.335855760736289,0.26996544420812,0.625414498300639,-0.584774909547386,0.766670407352295,0.0531273448276597,-0.00666339818016859,-0.35059839905008,0.358632719042721,0.287176627349162,0.780423971607691,0.953929652795173,0.944128629350299,1,-0.109012125827902,0.272612667410318,0.208502682139032,-0.743573916960109,0.377321356511845,0.444081170204761,0.778404464946694,0.716540109844479,0.0467959147767716,0.0328442371415227,0.550868811912333,0.948353446465318,0.886817663428227,0.245490415357226,0.182368724386198,0.739827836311409,0.466838628006868,0.401385055777968,0.663799206245364,0.290614482268937,-0.898185123048676,-0.793310113919201,-0.0254537387864151,-0.248569966677334,0.902253823045983,0.858555253633555,0.411940256153573,-0.581411742573648,-0.576703463364486,-1,-0.995822552358424,0.0797757671463482,0.891273464004315,-0.0662576328744037,0.00129479127216658,0.840178550895214,0.745067241962899,0.801034095298586,-0.433133522733594,-0.795956347281876,-0.0354259983263223,0.252812585464936,0.728906088917228,-0.267938680035705,-0.722881468980881,0.230719467286436,-0.509804948488106,-0.587073331768699,0.46792024636085,0.23350538279132,-0.279213448448848,0.968158394614121,0.989479285273897],"label":["DW01178","DW01233","DW01231","DW01139","DW01202","DW01177","DW01145","DW01138","DW01155","DW01103","DW01244","DW01232","DW01104","DW01228","DW01243","DW01176","DW00384","DW01220","DW01108","DW01230","DW01132","DW00626","DW00850","DW00270","DW01166","DW00394","DW00400","DW01225","DW01234","DW00426","DW01282","DW00424","DW00520","DW00853","DW00388","DW01236","DW00988","DW00462","DW01169","DW00428","DW00427","DW00440","DW00704","DW00395","DW00377","DW00684","DW00856","DW01219","DW01252","DW01122","DW00392","DW00479","DW00345","DW00401","DW01240","DW00627","DW01046","DW00808","DW00242","DW01235","DW01269","DW01179","DW00271","DW00762","DW01297","DW00796","DW01256","DW00989","DW00807","DW00477","DW00347","DW00098","DW01102","DW00672","DW01287","DW01197","DW01118","DW00813","DW00978","DW00701","DW01198","DW01164","DW01293","DW01199","DW00703","DW01281","DW01147","DW00778","DW00391","DW00463","DW00423","DW01168","DW00425","DW01142","DW00812","DW00826","DW01153","DW01146","DW01254","DW01212","DW00963","DW00329","DW01127","DW01190","DW01223","DW00445","DW00127","DW01152","DW00589","DW00393","DW00573","DW00499","DW00691","DW00333","DW00576","DW00289","DW01216","DW00570","DW01158","DW01148","DW01038","DW01183","DW01094","DW01203","DW00679","DW00640","DW00655","DW00403","DW01157","DW01263","DW00641","DW01283","DW01161","DW00151","DW00146","DW01186","DW01129","DW00232","DW00805","DW00803","DW00706","DW00577","DW00219","DW01154","DW01043","DW00972","DW00274","DW00257","DW01125","DW00893","DW00736","DW00290","DW01217","DW00957","DW01270","DW00065","DW00080","DW00888","DW00434","DW00887","DW00421","DW00730","DW00497","DW00534","DW01253","DW01021","DW00571","DW00959","DW01115","DW00962","DW00806","DW00809","DW01242","DW00927","DW00919","DW00822","DW00273","DW01173","DW01174","DW00849","DW00980","DW00985","DW00140","DW00408","DW00409","DW01238","DW01239","DW00506","DW00504","DW01211","DW00979","DW00976","DW00171","DW01058","DW00207","DW00606","DW01200","DW01003","DW00668","DW00404","DW00961","DW01207","DW00631","DW00288","DW00247","DW00362","DW00414","DW00651","DW00087","DW00060","DW01137","DW01011","DW01130","DW00965","DW00209","DW01110","DW01111","DW00204","DW01036","DW01057","DW01204","DW01286","DW00450","DW00875","DW01227","DW01185","DW01224","DW00233","DW01201","DW00206","DW00764","DW00787"]},"edges":{"from":["DW01142","DW01132","DW01235","DW01178","DW01233","DW00423","DW01132","DW01230","DW01244","DW01202","DW01244","DW01178","DW01169","DW01157","DW01232","DW01244","DW01178","DW01103","DW01152","DW01234","DW00979","DW01244","DW00384","DW00384","DW01220","DW00288","DW01243","DW01177","DW01234","DW00426","DW01132","DW01233","DW01243","DW00274","DW01104","DW01293","DW01155","DW01132","DW01231","DW01132","DW01132","DW01155","DW01138","DW00796","DW00423","DW01155","DW01178","DW01223","DW01132","DW01132","DW01166","DW00394","DW00796","DW01232","DW01202","DW01177","DW00807","DW01177","DW00151","DW01234","DW01244","DW01243","DW01103","DW01177","DW00462","DW01129","DW01177","DW01232","DW00462","DW00423","DW01168","DW01243","DW00706","DW01231","DW01231","DW00440","DW01220","DW01243","DW01236","DW01231","DW01132","DW01220","DW01233","DW00796","DW01240","DW01102","DW00704","DW01233","DW01243","DW00395","DW00271","DW00627","DW01155","DW01176","DW01155","DW01176","DW01231","DW01233","DW01297","DW01199","DW01197","DW01216","DW01235","DW00570","DW01153","DW01153","DW01178","DW01138","DW01231","DW01146","DW00392","DW01108","DW01169","DW00462","DW01155","DW00270","DW01233","DW01176","DW01231","DW00423","DW00098","DW00098","DW01166","DW01166","DW01155","DW00428","DW01021","DW00959","DW00626","DW00394","DW01242","DW01230","DW01230","DW00463","DW01240","DW01176","DW00850","DW01103","DW00762","DW01122","DW01046","DW00627","DW01232","DW00627","DW01145","DW00140","DW01166","DW01155","DW01155","DW01244","DW00271","DW01166","DW01178","DW00270","DW00850","DW01145","DW01166","DW01282","DW01177","DW01177","DW01166","DW01168","DW00388","DW01234","DW00391","DW01232","DW01145","DW01145","DW01282","DW00627","DW00098","DW01166","DW01122","DW01177","DW01139","DW01236","DW01236","DW01147","DW01198","DW01145","DW00271","DW00087","DW01179","DW01168","DW00345","DW01198","DW01220","DW01243","DW01231","DW00440","DW00270","DW01177","DW01231","DW00098","DW01197","DW01176","DW01176","DW01176","DW00704","DW01155","DW01155","DW01154","DW00520","DW00573","DW00691","DW01240","DW01232","DW00333","DW01179","DW01179","DW00477","DW00271","DW00400","DW00853","DW00808","DW01240","DW00242","DW01164","DW00672","DW00808","DW01231","DW00893","DW01176","DW00289","DW01233","DW01232","DW01293","DW00826","DW01202","DW01158","DW01118","DW01293","DW01254","DW01212","DW00808","DW00957","DW00392","DW00778","DW00392","DW00462","DW01177","DW01297","DW01252","DW01225","DW01234","DW01176","DW01178","DW00391","DW00426","DW01240","DW00242","DW00242","DW01269","DW01297","DW01282","DW00065","DW01178","DW00434","DW01233","DW00808","DW01127","DW00421","DW00730","DW00270","DW00497","DW00270","DW01253","DW01293","DW00850","DW00392","DW00391","DW01230","DW00400","DW01230","DW01230","DW01183","DW01230","DW01240","DW00270","DW01169","DW00962","DW00806","DW00394","DW01230","DW00424","DW00424","DW00392","DW01155","DW01223","DW01244","DW01203","DW00927","DW01169","DW01122","DW00392","DW00822","DW00377","DW00377","DW00377","DW01176","DW01178","DW01233","DW00273","DW01173","DW01235","DW00850","DW00477","DW00440","DW00849","DW00640","DW00403","DW01202","DW00808","DW01225","DW01199","DW00394","DW00270","DW01256","DW01263","DW01146","DW01164","DW00980","DW00640","DW00426","DW00426","DW00394","DW01212","DW00347","DW00347","DW00347","DW01283","DW01122","DW01243","DW00988","DW00462","DW01161","DW00394","DW01282","DW01161","DW00270","DW00394","DW01287","DW01183","DW01282","DW01198","DW01177","DW01232","DW00384","DW01232","DW00408","DW00479","DW00427","DW00394","DW01238","DW00394","DW01252","DW00400","DW01152","DW00807","DW01282","DW01198","DW01230","DW00506","DW01177","DW01232","DW01164","DW01282","DW01252","DW01152","DW01252","DW01283","DW00520","DW01177","DW01198","DW01211","DW00850","DW00850","DW00445","DW00462","DW00171","DW00424","DW01186","DW01220","DW00606","DW01233","DW00384","DW01122","DW01200","DW01263","DW00684","DW01252","DW00333","DW00345","DW00404","DW00704","DW01232","DW00151","DW00778","DW00462","DW01166","DW01252","DW01233","DW01155","DW00440","DW00961","DW01220","DW00520","DW00391","DW00704","DW00463","DW00691","DW00232","DW00805","DW01220","DW01220","DW00704","DW00704","DW00384","DW01046","DW01145","DW00704","DW00427","DW00388","DW00362","DW00445","DW00704","DW00270","DW01220","DW01282","DW01177","DW01137","DW01282","DW00672","DW00242","DW00826","DW01168","DW00388","DW00388","DW00672","DW00424","DW01102","DW01231","DW00424","DW00271","DW01231","DW00424","DW00424","DW01132","DW01269","DW01220","DW00627","DW01130","DW00520","DW00146","DW00393","DW00392","DW00384","DW00384","DW01225","DW00684","DW01231","DW00209","DW00395","DW00627","DW00395","DW01110","DW00395","DW00573","DW00425","DW00393","DW00204","DW00627","DW00477","DW00440","DW00440","DW00440","DW01197","DW01231","DW01036","DW01256","DW00393","DW00499","DW01057","DW00672","DW01240","DW00242","DW01231","DW00440","DW01286","DW00270","DW01176","DW01197","DW01176","DW01231","DW00347","DW01203","DW00641","DW01230","DW00803","DW00450","DW00826","DW00271","DW00477","DW01231","DW00796","DW01231","DW00345","DW00426","DW01230","DW01233","DW01185","DW01094","DW00395","DW00395","DW00232","DW01145","DW01142","DW01197","DW00479","DW01231","DW00206","DW01233","DW01287","DW00764"],"to":["DW01102","DW01177","DW01225","DW01202","DW01138","DW00424","DW01139","DW01235","DW01178","DW01139","DW01202","DW01139","DW01108","DW01147","DW01233","DW01139","DW01104","DW01139","DW01153","DW01236","DW00976","DW01103","DW00856","DW00850","DW01219","DW00247","DW01178","DW01139","DW01138","DW00427","DW01244","DW01234","DW01104","DW00257","DW01139","DW01297","DW01228","DW01178","DW01138","DW01176","DW01202","DW01178","DW01219","DW00428","DW00427","DW01139","DW01145","DW01225","DW01104","DW01103","DW01178","DW00388","DW00329","DW01228","DW01104","DW01244","DW00808","DW01228","DW00146","DW01228","DW01104","DW01244","DW01104","DW01178","DW00796","DW00679","DW01202","DW01138","DW00425","DW00988","DW01118","DW01202","DW00701","DW01233","DW01232","DW00428","DW01122","DW01139","DW01138","DW01179","DW01243","DW01108","DW01236","DW00479","DW01224","DW01118","DW00701","DW01228","DW01103","DW00377","DW00762","DW00098","DW01233","DW01178","DW01232","DW01177","DW01145","DW01178","DW01287","DW01219","DW01142","DW01217","DW01236","DW00626","DW01148","DW01146","DW01228","DW01228","DW01122","DW01147","DW00853","DW01219","DW01158","DW00626","DW01202","DW00479","DW01145","DW01139","DW01104","DW00426","DW00762","DW01046","DW01244","DW01243","DW01145","DW00626","DW00571","DW00963","DW00978","DW00850","DW01145","DW01225","DW01223","DW00762","DW01103","DW01104","DW00856","DW01202","DW00626","DW01219","DW00626","DW00762","DW01234","DW01046","DW01228","DW00127","DW01202","DW01104","DW01103","DW01145","DW00626","DW01155","DW01103","DW00762","DW00388","DW01202","DW01145","DW00807","DW01234","DW01233","DW01139","DW01169","DW00856","DW01225","DW00853","DW01145","DW01139","DW01138","DW00345","DW00270","DW00626","DW01104","DW01108","DW01155","DW01228","DW01228","DW01225","DW01148","DW01122","DW01104","DW00479","DW00060","DW01202","DW01102","DW00589","DW01108","DW01138","DW01145","DW01228","DW00425","DW00626","DW01103","DW01178","DW00479","DW01219","DW01233","DW01232","DW01231","DW00706","DW01244","DW01243","DW00345","DW00401","DW00499","DW01043","DW01178","DW00684","DW00972","DW01104","DW01103","DW00347","DW01046","DW00856","DW00856","DW00388","DW01202","DW01139","DW00576","DW01125","DW00812","DW01139","DW00736","DW01202","DW00290","DW01202","DW00703","DW01287","DW01252","DW01228","DW01108","DW01108","DW01281","DW00853","DW01216","DW00400","DW00963","DW00856","DW00988","DW00850","DW00988","DW00684","DW01269","DW00813","DW01228","DW00684","DW01145","DW01179","DW01270","DW00329","DW01139","DW01104","DW01103","DW01281","DW01256","DW00520","DW00080","DW00888","DW00887","DW01139","DW00345","DW01108","DW01038","DW00626","DW00463","DW00534","DW00462","DW01256","DW01252","DW00520","DW00395","DW01254","DW01236","DW00401","DW01234","DW01233","DW01228","DW01232","DW01115","DW01094","DW01127","DW00963","DW00809","DW00853","DW01190","DW00989","DW00988","DW00384","DW01138","DW01235","DW01179","DW00679","DW00919","DW01118","DW01199","DW00377","DW00813","DW00856","DW00853","DW00850","DW01103","DW01138","DW01104","DW00289","DW01174","DW01138","DW00853","DW00989","DW00988","DW00520","DW00655","DW00989","DW00445","DW00701","DW01138","DW01108","DW00395","DW00428","DW01102","DW00813","DW00400","DW01132","DW00985","DW00641","DW00989","DW00988","DW00384","DW01108","DW00427","DW00426","DW00424","DW01281","DW01169","DW00242","DW00427","DW00479","DW01230","DW00377","DW00384","DW01190","DW01046","DW00807","DW01269","DW01138","DW00812","DW01220","DW01243","DW01178","DW00520","DW01177","DW00409","DW00988","DW00428","DW00401","DW01239","DW00400","DW01297","DW00701","DW01157","DW00812","DW00808","DW01219","DW01138","DW00504","DW01236","DW01202","DW01103","DW00400","DW01287","DW01147","DW01281","DW01256","DW01236","DW01225","DW01169","DW01212","DW00401","DW00400","DW01139","DW00440","DW01058","DW00479","DW00207","DW01233","DW00589","DW00684","DW00853","DW01127","DW01108","DW01003","DW01228","DW01269","DW01038","DW00668","DW00989","DW00394","DW01139","DW00127","DW00427","DW00428","DW01103","DW01256","DW00703","DW00684","DW00477","DW00576","DW01178","DW01207","DW00392","DW00384","DW00631","DW01164","DW00345","DW00807","DW01169","DW01166","DW00807","DW00805","DW00388","DW00463","DW01103","DW00803","DW00329","DW00377","DW00589","DW00414","DW00401","DW00651","DW01155","DW00704","DW01138","DW01138","DW00701","DW01235","DW01244","DW01011","DW01108","DW00401","DW00400","DW01190","DW00428","DW01169","DW01244","DW00427","DW00462","DW01243","DW00426","DW00425","DW00242","DW00813","DW01145","DW00626","DW00965","DW01139","DW00127","DW00394","DW01254","DW00401","DW00400","DW00703","DW01138","DW01234","DW01186","DW00856","DW00978","DW00853","DW01111","DW00850","DW00577","DW00988","DW00384","DW00978","DW00570","DW00426","DW00427","DW00426","DW00424","DW01199","DW01220","DW00796","DW01269","DW00377","DW00577","DW00520","DW01204","DW01244","DW01178","DW01219","DW00778","DW01269","DW00978","DW01244","DW01220","DW01243","DW01177","DW00989","DW01129","DW00655","DW00672","DW01282","DW01046","DW01297","DW00428","DW00403","DW01202","DW00875","DW01166","DW01227","DW00778","DW00703","DW01235","DW00978","DW00219","DW00388","DW00384","DW00233","DW00684","DW01118","DW01201","DW00428","DW01155","DW00219","DW01225","DW00813","DW00787"],"weight":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7.19e-07,0,0,0,0,0,0,0,0,6.8e-05,0,0,0,0,0,0,0,0,0,0,0,8.97e-07,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5.45e-05,0,0,0,0,0,0,0.00085,1.15e-05,0,0,0,0,0,0,0,0,0,0,0,0.002448362,0,0,0,0,0,0,0,0,3.61e-15,0.00640791,0,0.006054716,0,0,0,0,0.001117359,0.022811952,0,0,0,0.020404297,0,0,0.003745522,0,0,0,0,0.000473,0,0,0,0,7e-06,0,0.005778763,0.002018086,0,0.009905838,0,1.63e-13,0,0,0,0,0.001445812,0,0,0.011181289,0,0,0,0,0,0,0,0,1.1e-14,0,0,0,0,0,9.94e-06,0.000522,4.71e-07,0,0,0,0,0,0,0,0,0,0.001139236,0,0,0,6.06e-08,0,0,0,0,0,0.000102,0,0,0.005106249,0,0,0,0,0,0,0,0.002448362,0.001244605,0.022638637,0,0.009038319,0.001921887,0,0.001789745,0.002643116,0,0.011577935,0,0.003720084,0,0.009037094,0.002715543,0.004818418,6.04e-16,0.000458,0.00515265,0,0,0.000207,0.006992189,0,2.72e-05,0,0.001572982,0.011219764,0,0,0,0,0,0.009000295,0.000276,0,0.005139897,0.001572982,0.000407,0,0,0,0.004442998,0,0.001753118,0,0,0.004717337,0.001411146,0.002858251,0,0,0.005165781,6.87e-05,0.011219764,0,0.007601438,7.11e-06,0,0,0.001436835,0.000491,0,0.001870666,0,0,0.000933,0.000223,0,0,0.000223,0,0,0.002461894,0,0,0.000101,0,0.004103311,0,0.011988971,9.46e-09,0,3.48e-05,0.000366,0.003294909,0.000524,0.001928296,0.004635477,0.001707196,0,0,0.006232151,0,0.000395,0.006111749,0.004981736,0,0,0,0,0,0,0.019800565,0,0.000238,0.009819603,0.019578359,0,0.017083089,0,0,0,0.008451322,0.002778384,0,0,0,0.009819603,0.006855645,0.022061189,7.42e-14,0,0,0,3.38e-13,3.2e-14,0,1.67e-05,0,0.002619597,0,0,1.19e-10,0.000242,0,2.64e-09,0.012922248,0,0,0.002838135,0.003345143,0.007319482,0.002461894,0.002887061,0.021446205,0.000169,0,0.00627068,1.87e-06,0,0,0,0,0,0,0.000953,2.77e-05,0.002643116,0,0.018576655,0,0.002546721,0.008889455,0,0,0,0,8.23e-14,0.001364505,0,0.022628024,3.72e-08,0,0,0.002307975,2.08e-05,0,0,0,0,0,0.001442424,0.0050298,0.002085055,0,0,0.000209,0,0.015292808,0.006916903,0,0,0.003948933,1.96e-06,0,0,0,0,0,0.001861323,0,0,0,0.010483627,0,0,0.000211,0,0.01760215,0,0,0,0,0,0,0.009819603,0,0,0,0.012565853,6.36e-05,0.020997625,0,0.000142,0,0,0,0,0,5.01e-15,0.00198212,0,0,0,0,1.21e-08,0,0,0.007914449,0,0.000175,0.008639658,0,3.99e-05,0.002040208,0,0,0,0,0.024446845,5.98e-05,0.001868799,0,0,0,0,0.002461394,0,0,0.000218,0.022787451,0.000386,0,0.009956947,0.020136058,0.000143,0,0.016385624,0.005319794,0,0,0,0,0.001646884,0,0.012511303,4.04e-16,0.010845353,0.01488029,0.0177762,7.91e-11,0.009525671,0.002309951,0,0,0,0.002328424,0,0,0,0,0,0.00688863,0.023801734,0,0,0.023801734,0,0.000141,0,0.004787944,0.024160201,0.006854074,5.65e-05,0,0,0,1.57e-05,0.007150848,0.018983585,0.00085,0,0.004786732,0,0.004981736,0,0.002191123,0.003229892,0,0,0],"interactionType":["copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","mutualExclusion","copresence","copresence","copresence","copresence","mutualExclusion","mutualExclusion","copresence","copresence","copresence","mutualExclusion","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","mutualExclusion","copresence","mutualExclusion","mutualExclusion","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","mutualExclusion","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","mutualExclusion","copresence","copresence","mutualExclusion","copresence","copresence","mutualExclusion","mutualExclusion","copresence","mutualExclusion","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","mutualExclusion","mutualExclusion","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","mutualExclusion","copresence","copresence","mutualExclusion","copresence","mutualExclusion","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence"],"color":["#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#8b0000","#8b0000","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#8b0000","#8b0000","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#8b0000","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#8b0000","#00b300","#00b300","#8b0000","#00b300","#00b300","#8b0000","#8b0000","#00b300","#8b0000","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#8b0000","#8b0000","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#8b0000","#00b300","#00b300","#8b0000","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":false},"physics":{"stabilization":false}},"groups":null,"width":null,"height":null,"idselection":{"enabled":true,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":null,"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","igraphlayout":{"type":"square"},"highlight":{"enabled":true,"hoverNearest":false,"degree":1,"algorithm":"all","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":false,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":true,"position":"left","ncol":1,"stepX":100,"stepY":100,"zoom":true}},"evals":[],"jsHooks":[]}</script>
+<p>In this network, positive and negative type interactions are colored green and red, respectively.</p>
+<p>I’ve also created <a href="https://pintolab.shinyapps.io/CoNet/">this</a> shiny app to play with the network’s layout. Take a look!</p>
+<p>From the network graph we can see that there are two large components (or clusters), in fact 71.12% of the MAGs are part of those clusters.</p>
+<p>We will now hone in on these nodes by creating two connected sub-graphs.</p>
+<div id="htmlwidget-2" style="width:50%;height:480px;" class="visNetwork html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2">{"x":{"nodes":{"id":["DW01142","DW01132","DW01235","DW01178","DW01233","DW01230","DW01244","DW01202","DW01169","DW01157","DW01232","DW01103","DW01152","DW01234","DW00384","DW01220","DW01243","DW01177","DW01104","DW01293","DW01155","DW01231","DW01138","DW01223","DW01166","DW00394","DW00807","DW01168","DW00706","DW01236","DW01240","DW01102","DW00704","DW00395","DW01176","DW01297","DW01199","DW01197","DW01216","DW01153","DW01146","DW00392","DW01108","DW01242","DW00850","DW01122","DW01145","DW01282","DW00388","DW00391","DW01139","DW01147","DW01198","DW01179","DW00345","DW01154","DW00520","DW00691","DW00400","DW00853","DW00808","DW00242","DW01164","DW00672","DW00826","DW01158","DW01118","DW01254","DW01212","DW01252","DW01225","DW01269","DW01127","DW01253","DW01183","DW00822","DW00377","DW00849","DW01256","DW01263","DW01283","DW01161","DW01287","DW01211","DW00445","DW00606","DW01200","DW00684","DW00961","DW00232","DW00805","DW00362","DW01137","DW00393","DW01057","DW01286","DW00803","DW00856","DW01219","DW01228","DW00701","DW01224","DW01217","DW01148","DW00589","DW00401","DW01043","DW00576","DW01125","DW00812","DW00703","DW01281","DW00813","DW01270","DW00888","DW01115","DW01190","DW01003","DW00668","DW01207","DW00414","DW01011","DW01204","DW01227","DW00233","DW01201"],"label":["DW01142","DW01132","DW01235","DW01178","DW01233","DW01230","DW01244","DW01202","DW01169","DW01157","DW01232","DW01103","DW01152","DW01234","DW00384","DW01220","DW01243","DW01177","DW01104","DW01293","DW01155","DW01231","DW01138","DW01223","DW01166","DW00394","DW00807","DW01168","DW00706","DW01236","DW01240","DW01102","DW00704","DW00395","DW01176","DW01297","DW01199","DW01197","DW01216","DW01153","DW01146","DW00392","DW01108","DW01242","DW00850","DW01122","DW01145","DW01282","DW00388","DW00391","DW01139","DW01147","DW01198","DW01179","DW00345","DW01154","DW00520","DW00691","DW00400","DW00853","DW00808","DW00242","DW01164","DW00672","DW00826","DW01158","DW01118","DW01254","DW01212","DW01252","DW01225","DW01269","DW01127","DW01253","DW01183","DW00822","DW00377","DW00849","DW01256","DW01263","DW01283","DW01161","DW01287","DW01211","DW00445","DW00606","DW01200","DW00684","DW00961","DW00232","DW00805","DW00362","DW01137","DW00393","DW01057","DW01286","DW00803","DW00856","DW01219","DW01228","DW00701","DW01224","DW01217","DW01148","DW00589","DW00401","DW01043","DW00576","DW01125","DW00812","DW00703","DW01281","DW00813","DW01270","DW00888","DW01115","DW01190","DW01003","DW00668","DW01207","DW00414","DW01011","DW01204","DW01227","DW00233","DW01201"],"x":[0.522483726368477,0.470466842244817,0.399978832707428,0.458574039414123,0.397723722795885,0.430612113324958,0.45609716689594,0.424608175318439,0.532113400596072,-0.799212813192647,0.40094457192326,0.478072014622855,-0.77254404377368,0.357034303112946,-0.302994728085053,0.490633331533081,0.437380034203822,0.394410616685929,0.456039778881428,0.418058588078984,0.436861556199292,0.452556796899163,0.395893569316132,0.356691155502481,0.475836869965937,-0.360908370738873,-0.464536683851593,0.549940216570858,-0.504873219945895,0.265026483261124,0.46430496779197,0.523081499054143,-0.414647798083654,-0.313575586486885,0.416271814900188,0.429311255053637,0.580749837554981,0.547760182492394,0.907782280891994,-0.723308429310846,-0.60773991408767,-0.311387681766728,0.591300162581484,0.612787698178455,-0.277414381516644,0.524012593916368,0.459350967586287,-0.397912093524399,-0.376306581379243,-0.343343449240846,0.34984607487524,-0.724441231884755,0.525946130995983,0.513436289229608,-0.682117174972617,-0.789232449205457,-0.060743200505769,0.719575404260225,-0.425455719342648,-0.33147423240935,-0.510420840648374,0.42894325318803,0.618892149495522,0.576660346753776,0.371874068104661,0.60930404012279,0.568485813980985,-0.338407008721821,0.781177573503979,0.447018659901391,0.342493763567302,0.494998746186174,0.546852617447001,0.556680788242243,0.285113823627787,0.512229472544494,-0.349999794573968,-0.0472824509815036,0.486544202856117,0.478419169895255,0.490180738349658,0.564967253270081,0.456522821168347,0.883056188768077,0.37048126149308,-1,0.696805623348048,0.412399610550372,0.873091418550546,-0.84905411133566,-0.523586076013828,-0.988482873190747,0.296354602273751,-0.391054017604384,-0.095951673483427,0.568394535400228,-0.439447670081175,-0.343425481633127,0.508667608927986,0.3679840067029,-0.475113197105337,0.538104317308928,1,-0.79592211586004,-0.876981597494332,-0.285816416151252,0.791811473911741,0.76811046361835,0.707350011219266,-0.520543501755922,0.352442921459814,0.479985479449771,0.47890728101968,-0.363853232559931,0.593560848648758,0.495699848894369,0.564733914609093,0.482462489135241,-0.782619705804514,-0.117663563500527,0.364810672015675,0.319083850056852,0.720813649276785,-0.775489879396979,-0.968475186307009,0.665104567711339],"y":[0.0735028823475796,-0.496930846618034,-0.295954151919076,-0.41616196944732,-0.365730153034929,-0.312640128562609,-0.453639385733671,-0.45244918850235,-0.0216731042301215,-1,-0.385677503090873,-0.474654990325681,-0.967585735328198,-0.358971291697221,-0.609742063423461,-0.239851092254089,-0.440813878165037,-0.411388128207928,-0.435832905879804,0.690850520709594,-0.386537726752858,-0.350659736926224,-0.322692941755046,-0.254078220018996,-0.395263070446478,-0.617788664185351,-0.571512909569617,0.0694652030946397,-0.484205800310324,-0.390365209445159,-0.537931451455483,0.196112977263234,-0.542245634323534,-0.662501293511304,-0.434371287553151,0.627388990423917,-0.118251374192255,-0.0861324423372292,0.154736922134428,-0.891709509236456,-0.803329519926803,-0.716717633476992,-0.0546622994255199,-0.415757928448786,-0.628371553746849,-0.155982079860476,-0.388372127312111,-0.55242646741697,-0.62517866453935,-0.814656957968792,-0.455770324642096,-0.920043848047459,-0.119070931143276,-0.439203636582751,-0.553232361541563,-0.538997118108697,-0.523144182212525,-0.729610336343695,-0.64311781181613,-0.706117132444355,-0.589412337878827,-0.494661447416483,-0.605722175421795,-0.266686433788728,0.721780040193405,0.0216374832667787,0.0765276626190365,-0.78243485868969,0.0636479097267961,0.652089994850352,-0.334186139998232,0.647630704864176,-0.0540321252529118,0.533788583708769,-0.330335208477976,0.861473501175683,-0.681243364289048,-0.600372538408273,0.487683670524662,0.905830033711695,0.581363956104387,-0.315081410843906,0.705957289400456,0.109257967035854,-0.569500082867244,-0.515515078354911,0.0144714514839963,-0.353798443904968,-0.757063937119804,-0.590696305570968,-0.5186003815941,-0.475442130740369,-0.23612706727765,-0.670629825658344,-0.575383806372601,0.72554284128485,-0.478807369481894,-0.660540891966378,-0.190566565155772,-0.386963706543402,-0.549792413628072,-0.638956152485943,0.215458157143947,-0.931502415150585,-0.515023687173451,-0.57538213498555,-0.81617687060116,-0.693609383446003,-0.233086438035654,-0.556272375488869,-0.307575884496868,0.668131715575537,0.771956032194213,-0.917491418859627,-0.485981085017723,-0.656649663435726,-0.289215282917234,1,-0.587900732751337,-0.476014773483039,-0.684545772784441,0.810540095696526,-0.2711840023543,-0.497527142492718,-0.617047554276699,-0.0382400837799071]},"edges":{"from":["DW01142","DW01132","DW01235","DW01178","DW01233","DW01132","DW01235","DW01178","DW01202","DW01244","DW01178","DW01169","DW01157","DW01233","DW01244","DW01178","DW01103","DW01152","DW01234","DW01244","DW00384","DW00384","DW01220","DW01178","DW01177","DW01234","DW01132","DW01233","DW01243","DW01104","DW01293","DW01155","DW01132","DW01231","DW01132","DW01132","DW01178","DW01138","DW01155","DW01178","DW01223","DW01132","DW01132","DW01178","DW00394","DW01232","DW01202","DW01244","DW00807","DW01177","DW01234","DW01244","DW01244","DW01103","DW01178","DW01202","DW01232","DW01168","DW01202","DW00706","DW01233","DW01232","DW01220","DW01243","DW01138","DW01231","DW01132","DW01220","DW01233","DW01240","DW01102","DW00704","DW01233","DW01103","DW00395","DW01233","DW01178","DW01232","DW01177","DW01231","DW01178","DW01297","DW01199","DW01142","DW01216","DW01235","DW01153","DW01153","DW01178","DW01138","DW01231","DW01146","DW00392","DW01108","DW01169","DW01202","DW01233","DW01176","DW01104","DW01244","DW01243","DW01155","DW00394","DW01242","DW01230","DW01230","DW01103","DW01104","DW00850","DW01202","DW01122","DW01232","DW01145","DW01202","DW01104","DW01103","DW01244","DW01155","DW01178","DW00850","DW01202","DW01166","DW00807","DW01234","DW01233","DW01166","DW01169","DW00388","DW01234","DW00391","DW01232","DW01145","DW01138","DW01282","DW01104","DW01108","DW01177","DW01139","DW01236","DW01236","DW01147","DW01122","DW01104","DW01202","DW01168","DW00345","DW01108","DW01220","DW01243","DW01231","DW01103","DW01178","DW01197","DW01233","DW01232","DW01231","DW00706","DW01244","DW01243","DW00345","DW00520","DW00691","DW01178","DW01232","DW01104","DW01103","DW00400","DW00853","DW00388","DW01202","DW01139","DW01164","DW00672","DW00808","DW01231","DW01202","DW01233","DW01232","DW01293","DW00826","DW01202","DW01108","DW01108","DW01293","DW00853","DW01216","DW00400","DW00392","DW00392","DW01177","DW01297","DW01252","DW01225","DW01234","DW01176","DW01178","DW00391","DW01240","DW01104","DW01103","DW01269","DW01297","DW01282","DW01178","DW01233","DW00345","DW01108","DW01253","DW01293","DW00850","DW00395","DW00391","DW01230","DW00400","DW01230","DW01233","DW01183","DW01230","DW01240","DW01169","DW00394","DW01230","DW00384","DW01155","DW01235","DW01244","DW01169","DW01199","DW00392","DW00822","DW00377","DW00853","DW00850","DW01103","DW01178","DW01233","DW01235","DW00850","DW00520","DW01202","DW00808","DW01138","DW01199","DW00394","DW01102","DW01263","DW01146","DW01132","DW00384","DW01108","DW01283","DW01169","DW01243","DW01230","DW00394","DW00384","DW01161","DW00394","DW01269","DW01138","DW01282","DW01220","DW01243","DW01178","DW00384","DW01232","DW00394","DW00394","DW01297","DW00400","DW01157","DW00807","DW01282","DW01198","DW01230","DW01177","DW01202","DW01103","DW01282","DW01252","DW01152","DW01252","DW01256","DW01236","DW01177","DW01169","DW01212","DW00850","DW00850","DW01139","DW01233","DW00606","DW01233","DW00384","DW01122","DW01108","DW01263","DW00684","DW01252","DW00345","DW00394","DW01232","DW01103","DW01252","DW01233","DW01155","DW00961","DW01178","DW00520","DW00392","DW00384","DW00691","DW00345","DW00807","DW01169","DW01220","DW00807","DW00704","DW00384","DW01103","DW00704","DW00388","DW00362","DW00445","DW00704","DW01220","DW00704","DW01177","DW01138","DW01282","DW01235","DW01244","DW00826","DW01168","DW00388","DW00388","DW00672","DW01169","DW01244","DW01243","DW01132","DW01269","DW01220","DW01139","DW00394","DW00392","DW00384","DW00384","DW01225","DW01138","DW01234","DW00395","DW00395","DW00395","DW00384","DW01199","DW01220","DW01269","DW00377","DW00520","DW00672","DW01244","DW01178","DW01231","DW01269","DW01244","DW01220","DW01243","DW01177","DW01230","DW01282","DW01297","DW01202","DW01231","DW00345","DW01230","DW01235","DW00395","DW00384","DW00232","DW01145","DW01142","DW01197","DW01155","DW01233","DW01287"],"to":["DW01102","DW01177","DW01225","DW01202","DW01138","DW01139","DW01230","DW01244","DW01139","DW01202","DW01139","DW01108","DW01147","DW01232","DW01139","DW01104","DW01139","DW01153","DW01236","DW01103","DW00856","DW00850","DW01219","DW01243","DW01139","DW01138","DW01244","DW01234","DW01104","DW01139","DW01297","DW01228","DW01178","DW01138","DW01176","DW01202","DW01155","DW01219","DW01139","DW01145","DW01225","DW01104","DW01103","DW01166","DW00388","DW01228","DW01104","DW01177","DW00808","DW01228","DW01228","DW01104","DW01243","DW01104","DW01177","DW01177","DW01138","DW01118","DW01243","DW00701","DW01231","DW01231","DW01122","DW01139","DW01236","DW01179","DW01243","DW01108","DW01236","DW01224","DW01118","DW00701","DW01228","DW01243","DW00377","DW01155","DW01176","DW01155","DW01176","DW01145","DW01233","DW01287","DW01219","DW01197","DW01217","DW01236","DW01148","DW01146","DW01228","DW01228","DW01122","DW01147","DW00853","DW01219","DW01158","DW01155","DW01145","DW01139","DW01231","DW01166","DW01166","DW01145","DW00850","DW01145","DW01225","DW01223","DW01240","DW01176","DW00856","DW01103","DW01219","DW01234","DW01228","DW01166","DW01155","DW01155","DW01145","DW01166","DW01103","DW00388","DW01145","DW01145","DW01282","DW01177","DW01177","DW01139","DW01168","DW00856","DW01225","DW00853","DW01145","DW01139","DW01145","DW00345","DW01166","DW01122","DW01155","DW01228","DW01228","DW01225","DW01148","DW01198","DW01145","DW01179","DW01102","DW00589","DW01198","DW01138","DW01145","DW01228","DW01177","DW01231","DW01219","DW01176","DW01176","DW01176","DW00704","DW01155","DW01155","DW01154","DW00401","DW01043","DW01240","DW00684","DW01179","DW01179","DW00856","DW00856","DW00808","DW01240","DW00242","DW00576","DW01125","DW00812","DW01139","DW01176","DW01202","DW00703","DW01287","DW01252","DW01228","DW01158","DW01118","DW01281","DW01254","DW01212","DW00808","DW00856","DW00850","DW00684","DW01269","DW00813","DW01228","DW00684","DW01145","DW01179","DW01270","DW01139","DW00242","DW00242","DW01281","DW01256","DW00520","DW00888","DW01139","DW00808","DW01127","DW01256","DW01252","DW00520","DW00392","DW01254","DW01236","DW00401","DW01234","DW01230","DW01228","DW01232","DW01115","DW01127","DW00853","DW01190","DW00392","DW01138","DW01223","DW01179","DW01118","DW01122","DW00377","DW00813","DW00856","DW00377","DW00377","DW01176","DW01138","DW01104","DW01138","DW00853","DW00849","DW00445","DW00701","DW01225","DW01108","DW00395","DW01256","DW00813","DW00400","DW01164","DW00394","DW01212","DW01281","DW01122","DW00242","DW01161","DW00377","DW01282","DW01190","DW00807","DW01287","DW01183","DW00812","DW01198","DW01177","DW01232","DW00520","DW01177","DW00401","DW00400","DW01252","DW00701","DW01152","DW00812","DW00808","DW01219","DW01138","DW01236","DW01232","DW01164","DW00400","DW01287","DW01147","DW01281","DW01283","DW00520","DW01225","DW01198","DW01211","DW00401","DW00400","DW00445","DW01220","DW00589","DW00684","DW00853","DW01127","DW01200","DW01003","DW01228","DW01269","DW00668","DW00704","DW01139","DW01166","DW01256","DW00703","DW00684","DW00576","DW01220","DW01207","DW00391","DW00704","DW01164","DW00232","DW00805","DW01220","DW01166","DW00704","DW00805","DW00388","DW01145","DW00803","DW00377","DW00589","DW00414","DW00401","DW01155","DW01282","DW01138","DW01137","DW00701","DW00672","DW00242","DW01011","DW01108","DW00401","DW00400","DW01190","DW01102","DW01231","DW01231","DW00242","DW00813","DW01145","DW00520","DW00393","DW01254","DW00401","DW00400","DW00703","DW00684","DW01231","DW00856","DW00853","DW00850","DW00393","DW01197","DW01231","DW01256","DW00393","DW01057","DW01204","DW01240","DW00242","DW01219","DW01286","DW01176","DW01197","DW01176","DW01231","DW00672","DW00803","DW00826","DW01231","DW01166","DW01227","DW00703","DW01233","DW00388","DW00395","DW00233","DW00684","DW01118","DW01201","DW01231","DW01225","DW00813"],"weight":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3.61e-15,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1.1e-14,0,0,0,0,0,9.94e-06,0,0,0,0,0,0,0,0,0,0,0,6.06e-08,0,0,0,0,0,0,0,0,0,0,0,0,0,0.002448362,0.001244605,0,0.009038319,0.001921887,0.001789745,0.002643116,0,0.003720084,0,0.009037094,0.002715543,0.004818418,6.04e-16,0.000458,0.00515265,0,0.006992189,0,2.72e-05,0,0.001572982,0.011219764,0,0,0,0,0,0.000276,0.005139897,0.000407,0,0,0,0.004442998,0,0.001753118,0,0.004717337,0.001411146,0.002858251,0,0,0.005165781,0.011219764,0.007601438,7.11e-06,0,0,0,0.000933,0.000223,0,0,0.000223,0,0,0.002461894,0,0,0,0.011988971,9.46e-09,0.000366,0.003294909,0.000524,0.001928296,0,0,0.006232151,0,0.000395,0.006111749,0.004981736,0,0,0,0,0.019800565,0.009819603,0.017083089,0,0,0,0.008451322,0,0,0,0.009819603,0,0,1.67e-05,0,0.002619597,1.19e-10,0.000242,0,2.64e-09,0,0,0.002838135,0.003345143,0.007319482,0.002461894,0.002887061,0.021446205,0.000169,0,0,0,0,0,0.000953,2.77e-05,0.002643116,0,0,0.002546721,0.008889455,0,0,0,0,8.23e-14,0.001364505,0,0.022628024,3.72e-08,0,0,0.002307975,0,0,0.001442424,0.0050298,0.002085055,0,0,0.000209,0,0.006916903,0,0.003948933,0,0,0,0.001861323,0,0,0.010483627,0,0,0,0.01760215,0,0,0,0,0,0,0,0,0.012565853,6.36e-05,0.020997625,0,0,0,0,0,0,5.01e-15,0.00198212,0,0,0,0,1.21e-08,0,0.007914449,0.008639658,0.002040208,0,0,0.024446845,0.001868799,0,0,0,0,0.002461394,0,0.000218,0.000386,0.009956947,0,0.001646884,0,4.04e-16,0.010845353,0.0177762,7.91e-11,0.009525671,0.002309951,0,0,0,0,0,0,0,0,0,0.004787944,0.006854074,5.65e-05,0,0,0.018983585,0.00085,0,0.004786732,0,0.004981736,0.002191123,0,0],"interactionType":["copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","mutualExclusion","copresence","mutualExclusion","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence"],"color":["#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#8b0000","#00b300","#8b0000","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":false},"physics":{"stabilization":false}},"groups":null,"width":null,"height":null,"idselection":{"enabled":true,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":null,"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","igraphlayout":{"type":"square"},"highlight":{"enabled":true,"hoverNearest":false,"degree":1,"algorithm":"all","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":false,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-3" style="width:50%;height:480px;" class="visNetwork html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3">{"x":{"nodes":{"id":["DW00423","DW00426","DW00796","DW00462","DW00440","DW00271","DW00627","DW00570","DW00270","DW00098","DW00428","DW00626","DW00463","DW00762","DW01046","DW00477","DW00778","DW00730","DW00424","DW00403","DW00347","DW00988","DW00479","DW00427","DW00404","DW00425","DW00204","DW01036","DW00450","DW01185","DW01094","DW00206","DW00329","DW00978","DW00989","DW00631","DW00651","DW00875","DW00219"],"label":["DW00423","DW00426","DW00796","DW00462","DW00440","DW00271","DW00627","DW00570","DW00270","DW00098","DW00428","DW00626","DW00463","DW00762","DW01046","DW00477","DW00778","DW00730","DW00424","DW00403","DW00347","DW00988","DW00479","DW00427","DW00404","DW00425","DW00204","DW01036","DW00450","DW01185","DW01094","DW00206","DW00329","DW00978","DW00989","DW00631","DW00651","DW00875","DW00219"],"x":[0.265264576814698,0.396938428485209,0.557530948800727,0.0639982382264497,0.165220412704156,-0.035023519673847,-0.371632357178531,-0.629349977312506,-0.0126674837581463,-0.139921188572534,0.149830967871774,-0.280715699282059,-0.151462690534535,-0.166186241099371,-0.232535836516503,0.331189533254383,0.136773996677843,-0.706582693888951,0.291538248285536,0.422406486529572,0.491738128349677,0.203555768221595,0.178567470381539,0.378785042407017,0.716682242471659,0.00733770639015452,-0.903320339233037,0.948446426659709,-0.410635921861645,-1,0.332217791643545,0.797553637280805,0.65145046636017,-0.570950213723374,0.499926257057856,-0.22320858971033,0.255044795007763,1,0.602694833934449],"y":[-0.567749317986313,-0.558224349371091,-0.16644138398897,-0.148215581264729,-0.438200120479571,0.0184193032395112,0.17553267306676,0.0974683301376182,0.172542896882116,0.0892133918883602,-0.174034782522129,0.0466502304715908,0.420173443052594,0.201036590194247,0.25900621862342,-0.729137401436363,-0.558843368427398,-0.0549505486406557,-0.439164262302866,-0.939607429856778,-0.632256822361982,-0.36938923528643,-0.107314565844501,-0.444167149514701,-1,-0.364349320018673,0.449865098441696,-0.0611168331159152,0.504224609475201,0.329195790448269,0.526356641865266,1,-0.400593394726671,0.264006448055502,-0.759806944153276,0.688165800608252,0.354778482601246,-0.184461943161406,0.802866219102537]},"edges":{"from":["DW00423","DW00796","DW00426","DW00462","DW00462","DW00627","DW00462","DW00627","DW00627","DW00796","DW00462","DW00440","DW00271","DW00270","DW00462","DW00271","DW00627","DW00570","DW00270","DW00098","DW00428","DW00270","DW00271","DW00627","DW00270","DW00098","DW00626","DW00463","DW00271","DW00627","DW00270","DW00098","DW00626","DW00463","DW00426","DW00440","DW00426","DW00440","DW00626","DW00423","DW00426","DW00440","DW00428","DW00477","DW00426","DW00477","DW00424","DW00423","DW00426","DW00462","DW00440","DW00778","DW00424","DW00796","DW00462","DW00271","DW00270","DW00098","DW00428","DW00424","DW00988","DW00423","DW00426","DW00440","DW00428","DW00778","DW00424","DW00347","DW00988","DW00462","DW00440","DW00424","DW00988","DW00796","DW01046","DW00270","DW00426","DW00796","DW00427","DW00627","DW00270","DW00626","DW00204","DW01185","DW00426","DW00477","DW00424","DW00403","DW00347","DW00404","DW00463","DW00270","DW00796","DW01094","DW00206"],"to":["DW00426","DW00462","DW00440","DW00440","DW00271","DW00570","DW00270","DW00270","DW00098","DW00428","DW00428","DW00428","DW00428","DW00428","DW00626","DW00626","DW00626","DW00626","DW00626","DW00626","DW00626","DW00463","DW00762","DW00762","DW00762","DW00762","DW00762","DW00762","DW01046","DW01046","DW01046","DW01046","DW01046","DW01046","DW00477","DW00477","DW00778","DW00778","DW00730","DW00424","DW00424","DW00424","DW00424","DW00403","DW00347","DW00347","DW00347","DW00988","DW00988","DW00988","DW00988","DW00988","DW00988","DW00479","DW00479","DW00479","DW00479","DW00479","DW00479","DW00479","DW00479","DW00427","DW00427","DW00427","DW00427","DW00427","DW00427","DW00427","DW00427","DW00425","DW00425","DW00425","DW00425","DW01036","DW00450","DW01094","DW00329","DW00329","DW00329","DW00978","DW00978","DW00978","DW00978","DW00978","DW00989","DW00989","DW00989","DW00989","DW00989","DW00989","DW00631","DW00651","DW00875","DW00219","DW00219"],"weight":[0,8.97e-07,0,2.08e-05,0.000175,0.005319794,0.001870666,0.000522,1.15e-05,7.19e-07,0,0,0.000141,0.002778384,0.00640791,0.001445812,0,0.002448362,0.000102,4.71e-07,0.020404297,0.000491,0.00085,0.002018086,0.011181289,0.001117359,7e-06,0.000473,0.011577935,0.009905838,0.012922248,0.022811952,0.005778763,0.009819603,0,0,0,0,0.001436835,0,0,0,0,0,3.2e-14,0,0,0,0,0.001572982,0.000238,0,3.48e-05,5.45e-05,0,0.001139236,0.006054716,0.005106249,0,0,0.00627068,0,0,0,1.87e-06,0,0,3.38e-13,0,0,0,3.99e-05,0.000143,0.012511303,0.023801734,0.000101,0,6.8e-05,0,0.022787451,0.002328424,0.003745522,0.016385624,1.57e-05,7.42e-14,0,0,0,0,0,0.000211,0.000142,0.024160201,0.007150848,0.003229892],"interactionType":["copresence","mutualExclusion","copresence","copresence","mutualExclusion","mutualExclusion","mutualExclusion","mutualExclusion","mutualExclusion","mutualExclusion","copresence","copresence","mutualExclusion","mutualExclusion","mutualExclusion","mutualExclusion","copresence","mutualExclusion","mutualExclusion","mutualExclusion","mutualExclusion","mutualExclusion","mutualExclusion","mutualExclusion","mutualExclusion","mutualExclusion","mutualExclusion","mutualExclusion","mutualExclusion","mutualExclusion","mutualExclusion","mutualExclusion","mutualExclusion","mutualExclusion","copresence","copresence","copresence","copresence","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","copresence","mutualExclusion","mutualExclusion","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","mutualExclusion","mutualExclusion","copresence","mutualExclusion","copresence","mutualExclusion","mutualExclusion","mutualExclusion","mutualExclusion","copresence","copresence","copresence","copresence","copresence","copresence","copresence","copresence","mutualExclusion","mutualExclusion","mutualExclusion","copresence"],"color":["#00b300","#8b0000","#00b300","#00b300","#8b0000","#8b0000","#8b0000","#8b0000","#8b0000","#8b0000","#00b300","#00b300","#8b0000","#8b0000","#8b0000","#8b0000","#00b300","#8b0000","#8b0000","#8b0000","#8b0000","#8b0000","#8b0000","#8b0000","#8b0000","#8b0000","#8b0000","#8b0000","#8b0000","#8b0000","#8b0000","#8b0000","#8b0000","#8b0000","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#00b300","#8b0000","#8b0000","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#8b0000","#8b0000","#00b300","#8b0000","#00b300","#8b0000","#8b0000","#8b0000","#8b0000","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#00b300","#8b0000","#8b0000","#8b0000","#00b300"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":false},"physics":{"stabilization":false}},"groups":null,"width":null,"height":null,"idselection":{"enabled":true,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":null,"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","igraphlayout":{"type":"square"},"highlight":{"enabled":true,"hoverNearest":false,"degree":1,"algorithm":"all","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":false,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"}},"evals":[],"jsHooks":[]}</script>
+<p>As discussed in the <a href="#background"><strong>??</strong></a> section, we can use centrality measures to describe node importance.</p>
+<p><img src="/blog/2021-07-01-graph-theory/index_files/figure-html/additional_info-1.png" width="50%" /><img src="/blog/2021-07-01-graph-theory/index_files/figure-html/additional_info-2.png" width="50%" /></p>
+<p>The MAGs with largest degrees correspond to DW01178 and DW00270, DW00626 in cluster 1 and 2, respectively. However, we know that degree alone is not the best metric for node importance. Let’s take a look at global metrics of centrality.</p>
+<p>The highest ranking MAGs for each metric in terms of centrality are</p>
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#gvxkbutuzg .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#gvxkbutuzg .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#gvxkbutuzg .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#gvxkbutuzg .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#gvxkbutuzg .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gvxkbutuzg .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#gvxkbutuzg .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#gvxkbutuzg .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#gvxkbutuzg .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#gvxkbutuzg .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#gvxkbutuzg .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#gvxkbutuzg .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#gvxkbutuzg .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#gvxkbutuzg .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#gvxkbutuzg .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#gvxkbutuzg .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#gvxkbutuzg .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#gvxkbutuzg .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gvxkbutuzg .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#gvxkbutuzg .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gvxkbutuzg .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#gvxkbutuzg .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#gvxkbutuzg .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gvxkbutuzg .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#gvxkbutuzg .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#gvxkbutuzg .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#gvxkbutuzg .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#gvxkbutuzg .gt_left {
+  text-align: left;
+}
+
+#gvxkbutuzg .gt_center {
+  text-align: center;
+}
+
+#gvxkbutuzg .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#gvxkbutuzg .gt_font_normal {
+  font-weight: normal;
+}
+
+#gvxkbutuzg .gt_font_bold {
+  font-weight: bold;
+}
+
+#gvxkbutuzg .gt_font_italic {
+  font-style: italic;
+}
+
+#gvxkbutuzg .gt_super {
+  font-size: 65%;
+}
+
+#gvxkbutuzg .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="gvxkbutuzg" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="2" class="gt_heading gt_title gt_font_normal" style><strong>Centrality metric ranking</strong></th>
+    </tr>
+    <tr>
+      <th colspan="2" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">node</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr class="gt_group_heading_row">
+      <td colspan="2" class="gt_group_heading">Cluster 1 - betweenness</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00520</td>
+      <td class="gt_row gt_right">3611.2821</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01139</td>
+      <td class="gt_row gt_right">2585.2435</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01220</td>
+      <td class="gt_row gt_right">2459.7131</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01169</td>
+      <td class="gt_row gt_right">1803.8373</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01102</td>
+      <td class="gt_row gt_right">1746.3667</td>
+    </tr>
+    <tr class="gt_group_heading_row">
+      <td colspan="2" class="gt_group_heading">Cluster 2 - betweenness</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00270</td>
+      <td class="gt_row gt_right">257.6060</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00428</td>
+      <td class="gt_row gt_right">161.8021</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00626</td>
+      <td class="gt_row gt_right">122.4988</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00462</td>
+      <td class="gt_row gt_right">106.8060</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00424</td>
+      <td class="gt_row gt_right">103.1034</td>
+    </tr>
+    <tr class="gt_group_heading_row">
+      <td colspan="2" class="gt_group_heading">Cluster 1 - degree</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01178</td>
+      <td class="gt_row gt_right">22.0000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01233</td>
+      <td class="gt_row gt_right">20.0000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01231</td>
+      <td class="gt_row gt_right">20.0000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01139</td>
+      <td class="gt_row gt_right">20.0000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01202</td>
+      <td class="gt_row gt_right">19.0000</td>
+    </tr>
+    <tr class="gt_group_heading_row">
+      <td colspan="2" class="gt_group_heading">Cluster 2 - degree</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00270</td>
+      <td class="gt_row gt_right">11.0000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00626</td>
+      <td class="gt_row gt_right">11.0000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00426</td>
+      <td class="gt_row gt_right">10.0000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00424</td>
+      <td class="gt_row gt_right">10.0000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00462</td>
+      <td class="gt_row gt_right">9.0000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00440</td>
+      <td class="gt_row gt_right">9.0000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00428</td>
+      <td class="gt_row gt_right">9.0000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00988</td>
+      <td class="gt_row gt_right">9.0000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00427</td>
+      <td class="gt_row gt_right">9.0000</td>
+    </tr>
+    <tr class="gt_group_heading_row">
+      <td colspan="2" class="gt_group_heading">Cluster 1 - eigenvector</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01178</td>
+      <td class="gt_row gt_right">1.0000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01139</td>
+      <td class="gt_row gt_right">0.9191</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01231</td>
+      <td class="gt_row gt_right">0.9139</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01202</td>
+      <td class="gt_row gt_right">0.9120</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01155</td>
+      <td class="gt_row gt_right">0.8747</td>
+    </tr>
+    <tr class="gt_group_heading_row">
+      <td colspan="2" class="gt_group_heading">Cluster 2 - eigenvector</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00424</td>
+      <td class="gt_row gt_right">1.0000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00428</td>
+      <td class="gt_row gt_right">0.9595</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00440</td>
+      <td class="gt_row gt_right">0.9517</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00988</td>
+      <td class="gt_row gt_right">0.9486</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00462</td>
+      <td class="gt_row gt_right">0.9091</td>
+    </tr>
+    <tr class="gt_group_heading_row">
+      <td colspan="2" class="gt_group_heading">Cluster 2 - closeness</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00428</td>
+      <td class="gt_row gt_right">0.0132</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00462</td>
+      <td class="gt_row gt_right">0.0127</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00270</td>
+      <td class="gt_row gt_right">0.0127</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00479</td>
+      <td class="gt_row gt_right">0.0125</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW00626</td>
+      <td class="gt_row gt_right">0.0122</td>
+    </tr>
+    <tr class="gt_group_heading_row">
+      <td colspan="2" class="gt_group_heading">Cluster 1 - closeness</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01139</td>
+      <td class="gt_row gt_right">0.0024</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01178</td>
+      <td class="gt_row gt_right">0.0023</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01233</td>
+      <td class="gt_row gt_right">0.0023</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01155</td>
+      <td class="gt_row gt_right">0.0023</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01231</td>
+      <td class="gt_row gt_right">0.0023</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01138</td>
+      <td class="gt_row gt_right">0.0023</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DW01145</td>
+      <td class="gt_row gt_right">0.0023</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+<p>Further, higher level metrics for both subgraphs are provided below.</p>
+<pre><code>## Joining, by = &quot;property&quot;</code></pre>
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#pmmtpqijjb .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#pmmtpqijjb .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#pmmtpqijjb .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#pmmtpqijjb .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#pmmtpqijjb .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#pmmtpqijjb .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#pmmtpqijjb .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#pmmtpqijjb .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#pmmtpqijjb .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#pmmtpqijjb .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#pmmtpqijjb .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#pmmtpqijjb .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#pmmtpqijjb .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#pmmtpqijjb .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#pmmtpqijjb .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#pmmtpqijjb .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#pmmtpqijjb .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#pmmtpqijjb .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pmmtpqijjb .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#pmmtpqijjb .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pmmtpqijjb .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#pmmtpqijjb .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#pmmtpqijjb .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#pmmtpqijjb .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#pmmtpqijjb .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#pmmtpqijjb .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#pmmtpqijjb .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#pmmtpqijjb .gt_left {
+  text-align: left;
+}
+
+#pmmtpqijjb .gt_center {
+  text-align: center;
+}
+
+#pmmtpqijjb .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#pmmtpqijjb .gt_font_normal {
+  font-weight: normal;
+}
+
+#pmmtpqijjb .gt_font_bold {
+  font-weight: bold;
+}
+
+#pmmtpqijjb .gt_font_italic {
+  font-style: italic;
+}
+
+#pmmtpqijjb .gt_super {
+  font-size: 65%;
+}
+
+#pmmtpqijjb .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="pmmtpqijjb" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="3" class="gt_heading gt_title gt_font_normal" style><strong>Network properties of subgraphs</strong></th>
+    </tr>
+    <tr>
+      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>Global information</th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">property</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Cluster 1</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Cluster 2</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_left">Clustering coefficient</td>
+      <td class="gt_row gt_right">0.406</td>
+      <td class="gt_row gt_right">0.358</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Network diameter</td>
+      <td class="gt_row gt_right">15.000</td>
+      <td class="gt_row gt_right">7.000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Network radius</td>
+      <td class="gt_row gt_right">8.000</td>
+      <td class="gt_row gt_right">4.000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Network centralization</td>
+      <td class="gt_row gt_right">0.127</td>
+      <td class="gt_row gt_right">0.161</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Characteristic path length</td>
+      <td class="gt_row gt_right">5.226</td>
+      <td class="gt_row gt_right">3.007</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Number of nodes</td>
+      <td class="gt_row gt_right">126.000</td>
+      <td class="gt_row gt_right">39.000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Average degree</td>
+      <td class="gt_row gt_right">6.127</td>
+      <td class="gt_row gt_right">4.872</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Network density</td>
+      <td class="gt_row gt_right">0.049</td>
+      <td class="gt_row gt_right">0.128</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+</div>
+
+        
+        <details closed class="f6 fw7 input-reset">
+  <dl class="f6 lh-copy">
+    <dt class="fw7">Posted on:</dt>
+    <dd class="fw5 ml0">September 19, 2021</dd>
+  </dl>
+  <dl class="f6 lh-copy">
+    <dt class="fw7">Length:</dt>
+    <dd class="fw5 ml0">16 minute read, 3202 words</dd>
+  </dl>
+  
+  
+  
+  <dl class="f6 lh-copy">
+    <dt class="fw7">See Also:</dt>
+    
+  </dl>
+</details>
+
+      </section>
+      <footer class="post-footer">
+        <div class="post-pagination dt w-100 mt4 mb2">
+  
+  
+  
+  
+    <a class="next dtc pl2 tr v-top fw6"
+    href="/blog/2021-07-01-content-creation-nugget-1/">Website content creation nugget 1 &rarr;</a>
+  
+</div>
+
+      </footer>
+    </article>
+    
+      
+<div class="post-comments pa0 pa4-l mt4">
+  
+  <script src="https://utteranc.es/client.js"
+          repo="apreshill/apero"
+          issue-term="pathname"
+          theme="boxy-light"
+          label="comments :crystal_ball:"
+          crossorigin="anonymous"
+          async
+          type="text/javascript">
+  </script>
+  
+</div>
+
+    
+  </section>
+</main>
+<footer class="site-footer pv4 bt b--transparent ph5" role="contentinfo">
+  <nav class="db dt-l w-100">
+    <p class="site-copyright f7 db dtc-l v-mid w-100 w-33-l tc tl-l pv2 pv0-l mv0 lh-copy">
+      &copy; 2021
+      <span class="middot-divider"></span>
+      Made with <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title"><a xmlns:dct="http://purl.org/dc/terms/" href="https://github.com/hugo-apero/" rel="dct:source">Hugo Apéro</a></span>.
+      <br />
+      
+Based on <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title"><a xmlns:dct="http://purl.org/dc/terms/" href="https://github.com/formspree/blogophonic-hugo" rel="dct:source">Blogophonic</a></span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://formspree.io" property="cc:attributionName" rel="cc:attributionURL">Formspree</a>.
+    </p>
+    
+    <div class="site-social-links db dtc-l v-mid w-100 w-33-l tc pv2 pv0-l mv0">
+      <div class="social-icon-links" aria-hidden="true">
+  
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="https://www.linkedin.com/in/maria-sevillano-rivera" title="linkedin" target="_blank" rel="noopener">
+      <i class="fab fa-linkedin fa-lg fa-fw"></i>
+    </a>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="https://github.com/msevi" title="github" target="_blank" rel="noopener">
+      <i class="fab fa-github fa-lg fa-fw"></i>
+    </a>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="https://orcid.org/0000-0003-0230-0624" title="orcid" target="_blank" rel="noopener">
+      <i class="ai ai-orcid fa-lg fa-fw"></i>
+    </a>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="http://scholar.google.com/citations?user=IMacHjAAAAAJ&amp;hl=en&amp;authuser=3" title="google-scholar" target="_blank" rel="noopener">
+      <i class="ai ai-google-scholar fa-lg fa-fw"></i>
+    </a>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="https://msevi.github.io/files/Sevillano_CV_2021.pdf" title="cv" target="_blank" rel="noopener">
+      <i class="ai ai-cv fa-lg fa-fw"></i>
+    </a>
+  
+</div>
+
+    </div>
+    
+    <div class="site-links f6 db dtc-l v-mid w-100 w-67-l tc tr-l pv2 pv0-l mv0">
+      
+      <a class="dib pv1 ph2 link" href="/license/" title="License">License</a>
+      
+      <a class="dib pv1 ph2 link" href="/contact/" title="Contact form">Contact</a>
+      
+    </div>
+  </nav>
+  <script src="//yihui.org/js/math-code.js" type="text/javascript"></script>
+  <script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML">  </script>
+</footer>
+      </div>
+    </body>
+</html>
