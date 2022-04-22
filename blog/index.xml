@@ -6,7 +6,17 @@
     <description>Recent content in A Blog That Works on Home</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 19 Sep 2021 00:00:00 +0000</lastBuildDate><atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 22 Apr 2022 00:00:00 +0000</lastBuildDate><atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Build a Shiny app with me</title>
+      <link>/blog/2022-04-22-build-a-shiny-app-with-me/</link>
+      <pubDate>Fri, 22 Apr 2022 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2022-04-22-build-a-shiny-app-with-me/</guid>
+      <description>Aim and scope The objective of this blog post is to walk through app creation and deployment using Shiny and shiny.io. This is intended to provide a high level overview of the process, but I highly encourage anyone interested in building their own apps to look into the resources compiled here. The shinyapps.io user guide is a very concise document to get anyone started!
+ Why should you create an app?</description>
+    </item>
+    
     <item>
       <title>Graph theory primer</title>
       <link>/blog/2021-07-01-graph-theory/</link>

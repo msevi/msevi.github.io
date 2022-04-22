@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head>
+  
+                           
+     
+
+
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.84.0" />
+<title>Build a Shiny app with me | Home</title>
+
+
+<meta property="twitter:site" content="@katty_sevi">
+<meta property="twitter:creator" content="@katty_sevi">
+
+
+
+
+
+
+
+  
+    
+  
+<meta name="description" content="Create a shiny app and deploy it on shinyapp.io.">
+
+
+<meta property="og:site_name" content="Home">
+<meta property="og:title" content="Build a Shiny app with me | Home">
+<meta property="og:description" content="Create a shiny app and deploy it on shinyapp.io." />
+<meta property="og:type" content="page" />
+<meta property="og:url" content="/blog/2022-04-22-build-a-shiny-app-with-me/" />
+<meta property="og:locale" content="en">
+
+
+
+
+    
+        <meta property="og:image" content="/blog/2022-04-22-build-a-shiny-app-with-me/featured.jpeg" >
+        <meta property="twitter:card" content="summary_large_image">
+        <meta name="twitter:image" content="/blog/2022-04-22-build-a-shiny-app-with-me/featured.jpeg" >
+    
+    
+  <meta itemprop="name" content="Build a Shiny app with me">
+<meta itemprop="description" content="Aim and scope The objective of this blog post is to walk through app creation and deployment using Shiny and shiny.io. This is intended to provide a high level overview of the process, but I highly encourage anyone interested in building their own apps to look into the resources compiled here. The shinyapps.io user guide is a very concise document to get anyone started!
+ Why should you create an app?"><meta itemprop="datePublished" content="2022-04-22T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2022-04-22T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1258"><meta itemprop="image" content="/blog/2022-04-22-build-a-shiny-app-with-me/featured.jpeg">
+<meta itemprop="keywords" content="" />
+  
+  <!--[if IE]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="shortcut icon" href="/img/008.png" type="image/x-icon">
+  <link rel="icon" href="/img/008.png" type="image/x-icon">
+  
+  
+  <link rel="stylesheet" href="/style.main.min.73e736bd4383f8090e0c7bb46d2b9fe5208816195891be73629cff4d163878c9.css" integrity="sha256-c&#43;c2vUOD&#43;AkODHu0bSuf5SCIFhlYkb5zYpz/TRY4eMk=" media="screen">
+  
+  
+  <script src="/panelset.min.d74e921a1b9af2d938fdff19e433ba539cdb202961eddae2356a54199f0653ec.js" type="text/javascript"></script>
+  
+  
+  <script src="/main.min.38a0323c5b0bbb611c4874ba2d8fdaba57d20cc2b0d704b30250c235ba8b6d49.js" type="text/javascript"></script>
+</head>
+<body>
+      <div class="grid-container">
+<header class="site-header pt4 pb2 mb4 bb b--transparent ph5 headroom z-max" role="banner">
+  <nav class="site-nav db dt-l w-100" role="navigation">
+    <a class="site-brand db dtc-l v-mid link no-underline w-100 w-33-l tc tl-l" href="/" title="Home">
+      <span class="f4 fw7">Home</span>
+    </a>
+    <div class="site-links db dtc-l v-mid w-100 w-47-l tc tr-l mt3 mt0-l ttu tracked">
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/about/" title="About">About</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 active" href="/blog/" title="Blog">Blog</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/project/" title="Project Portfolio">Projects</a>
+      
+      
+    </div>
+  </nav>
+</header>
+
+<main class="page-main pa4" role="main">
+  <section class="page-content mw7 center">
+    <article class="post-content pa0 ph4-l">
+      <header class="post-header">
+        <h1 class="f1 lh-solid measure-narrow mb3 fw4">Build a Shiny app with me</h1>
+        
+        <p class="f6 measure lh-copy mv1">By Maria Sevillano</p>
+        <p class="f7 db mv0 ttu">April 22, 2022</p>
+
+      
+
+      </header>
+      <section class="post-body pt5 pb4">
+        
+<script src="/blog/2022-04-22-build-a-shiny-app-with-me/index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="aim-and-scope" class="section level2">
+<h2>Aim and scope</h2>
+<p>The objective of this blog post is to walk through app creation and
+deployment using Shiny and shiny.io. This is intended to provide a high
+level overview of the process, but I highly encourage anyone interested
+in building their own apps to look into the resources compiled
+<a href="%3Chttps://shiny.rstudio.com/tutorial/">here</a>. The shinyapps.io <a href="https://docs.rstudio.com/shinyapps.io/index.html">user
+guide</a> is a very
+concise document to get anyone started!</p>
+</div>
+<div id="why-should-you-create-an-app" class="section level2">
+<h2>Why should you create an app?</h2>
+<ol style="list-style-type: decimal">
+<li>Cause it’s fun!</li>
+<li>To learn a new skill</li>
+<li>To encourage exploration and enable collaboration</li>
+<li>To generate revenue?</li>
+</ol>
+<p>In the past I have generated shiny apps to</p>
+<ol style="list-style-type: decimal">
+<li>share results internally with my supervisor,</li>
+<li>share analyses and visualization with collaborators,</li>
+<li>share a dashboard with stakeholders, and</li>
+<li>save money for my wedding! (let me know if you’d like to hear this
+story 😉)</li>
+</ol>
+<p>Initially, these applications were loaded in one-on-one meetings and
+resided on my local computer. Next, they were distributed as an Rproject
+through a USB. <strong>Finally, they were deployed to the web through
+shinyapps.io.</strong></p>
+<hr />
+<p>These notes have been generated as I create an app to track struggles of
+being a first time dog human: the <a href="https://msevi.shinyapps.io/my_doggie/">my_doggie
+app</a>. Check it out!</p>
+<blockquote>
+<p><a href="https://msevi.shinyapps.io/my_doggie/"><img src="images/myLogo.png" width="173" /></a></p>
+</blockquote>
+<hr />
+<p>Here’s how <strong>YOU</strong> can create your own.</p>
+</div>
+<div id="step-1-get-inspired" class="section level2">
+<h2>Step 1: Get inspired</h2>
+<p>Check out all the things you can create
+<a href="https://shiny.rstudio.com/gallery/#user-showcase">here</a>! Determine the
+appropriate layout and theme to suit your use case. Consider what’s
+important for you and how much time you have to generate it. Substance
+over aesthetics is ideal, but you can achieve both! Remember, this is a
+live document and you can always build on it.</p>
+</div>
+<div id="step-2-create-your-application" class="section level2">
+<h2>Step 2: Create your application</h2>
+<p>First things first. Create a R project. This practice will help future
+you stay organized. As a part of a workflow, you want to keep your input
+data, R scripts for analyses and additional files all together, so that
+they are easily accessible. Projects provide you with structure and the
+folders and files contained within it are referred to relative to the
+path where the project is (i.e., the working directory), this comes in
+handy when you want to distribute your work as well. You can find
+additional info about projects
+<a href="https://support.rstudio.com/hc/en-us/articles/200526207-Using-RStudio-Projects">here</a>.</p>
+<p>If you don’t already have it, download the <code>{shiny}</code> package. To create
+an application from your RStudio IDE, simply go to File –&gt; New File
+–&gt; Shiny Web App. This will generate a directory with the app name and
+within it, two files with the structure for a minimal application.</p>
+<p><img src="Screenshots/Screenshot_0.png" /></p>
+<p>The file structure within an app project can either consist of a single
+file (app.R), two-file (ui.R and server.R) or three-file (ui.R,
+server.R, and global.R) shiny app. Generally, multiple file apps make
+code easier to manage when the applications are large. In my case, I
+like to generate a three-file app to control global options in a single
+file and reduce redundancy in package loading.</p>
+<p>Additionally, I create a file called www to place things like files and
+images that I will want to use within the app. If you have a data heavy
+application, create a file called Data, to organize external tables.</p>
+<p>Click Run App on the top right of the console to locally serve this app.</p>
+<p><img src="Screenshots/Screenshot_1.png" /></p>
+<p>You can render the app in RStudio, but I highly recommend to test in
+browser, as sometimes the viewer won’t showcase the contents properly.</p>
+<p>An app requires two main elements:</p>
+<ol style="list-style-type: decimal">
+<li>UI (user interface): What the app looks like</li>
+<li>Server: How the app works</li>
+</ol>
+<div id="ui" class="section level3">
+<h3>UI</h3>
+<p>Defines the app layout (i.e., front-end).</p>
+<p><img src="Screenshots/Screenshot_UI.png" /></p>
+<p>In the minimal example provided by RStudio, the app backbone consists of
+a title, a sidebar panel in which the user provides an input using a
+slider, and a main panel which will contain the result of input action
+<code>plotOutput("distPlot")</code>.</p>
+<p>Use the help function on the layout functions to understand the
+arguments and play around to generate changes.</p>
+<p>I always recommend to create an outline using <code># placeholder----</code> as
+text in the code. This allows you to collapse text and navigate more
+easily within the app’s sections.</p>
+</div>
+<div id="server" class="section level3">
+<h3>Server</h3>
+<p>Defines the app (i.e., back-end) logic.</p>
+<p><img src="Screenshots/Screenshot_server.png" /></p>
+<p>In the minimal example provided by R, the server contains the
+<code>output$distPlot</code> function to render a plot subject to user changes of
+the <code>input$bins</code> variable.</p>
+<p>Reactivity is at the core of Shiny and the interactive user experience.
+It controls certain areas of the code, without us having to run the code
+in its entirety. Shiny uses a reactive programming model that consists
+of reactive sources, reactive conductors, and reactive endpoints. Learn
+more <a href="https://mastering-shiny.org/">here</a></p>
+<p>The minimal structure consists of sources and endpoints. Source is user
+input through the interface (e.g., select item, type input, click on
+button). Endpoint is the result of source input (e.g., plot or table).
+Just take a look at the arguments of the function that make up the
+server: <strong>input and output!</strong> The changes in input (i.e., re-executing)
+result in <strong>new</strong> output objects that refresh automatically (the
+handling of events occurs behind the scene). Reactive programming allows
+output to respond to changes in inputs. Keep in mind that you should
+have pairs of input ids (in the UI part) with server functions (in the
+server part).</p>
+</div>
+<div id="my-app" class="section level3">
+<h3>My app</h3>
+<p>I want to be able to organize the app in a series of tabs, for which
+each tab may have a sub-component. For that purpose, I will be using the
+<code>navbarPage()</code> function. Take a look at other layouts
+<a href="https://shiny.rstudio.com/articles/layout-guide.html">here</a>.</p>
+<p>After structuring the tabs, the fun part begins! Shiny is very flexible
+and you can customize your app by styling with CSS and HTML. This can be
+done inline or using additional files. Nevertheless, if you are not well
+versed at these technologies, you can opt to use the package <code>{bslib}</code>
+to get great looking themes.</p>
+<p>I will add the theme argument into the <code>navbarPage()</code> function.</p>
+<p>Perfect! Now you have the backbone as well as the color. What’s left?
+The <strong>CONTENT</strong>. Depending on what (e.g., use static images/plots) and
+how you want the app to work (e.g., interact, collect data), the
+complexity of your application will change.</p>
+<p>In order to have a more polished look using HTML and CSS is highly
+recommended, but remember, Google is your best friend! No need to
+reinvent the wheel.</p>
+<p>Another really cool package I incorporated to my app was
+<code>{googlesheets4}</code>. If you’d like to load data that is stored as a table
+in a remote server, you are in luck! This package provides flexibility
+to access and write Google Sheets, all you need is a Google account and
+a Google Sheets spreadsheet with data.</p>
+<p>A really cool widget to add to any shiny app is mapping. The <code>{leaflet}</code>
+package allows to embed geo-spatial mapping. For the app I’m creating,
+I’m using tables from Google Sheet as the input for markers in the
+<code>{leaflet}</code> map.</p>
+<hr />
+<p>Come back soon to check out other capabilities I add to the app!</p>
+<hr />
+</div>
+</div>
+<div id="step-3-deploy" class="section level2">
+<h2>Step 3: Deploy</h2>
+<p>There are several ways to host your apps. Here are some
+<a href="https://www.r-bloggers.com/2022/02/how-to-share-r-shiny-apps-top-3-methods-explained/">options</a>.
+I am familiar with ShinyApps.io so that’s what I will use.</p>
+<p>As long as you don’t expect a lot of traffic into your app and you limit
+yourself to only hosting 5 applications or less with them, it is free to
+use and convenient in terms of setup.</p>
+<p>This is how you do it:</p>
+<ol start="0" style="list-style-type: decimal">
+<li>Create shinyapps.io account</li>
+<li>Install rsconnect: the package enables you to deploy and manage your
+Shiny applications directly from your R console</li>
+<li>Authorize account: this step requires using a token and secret.</li>
+<li>Deploy</li>
+</ol>
+<p>Here’s an image capture of the steps from shinyapps.io</p>
+<p><img src="Screenshots/Screenshot_2.png" /></p>
+</div>
+<div id="there-you-have-it-you-can-now-create-and-deploy-an-app-for-the-world-to-see" class="section level2">
+<h2><strong>There you have it, you can now create and deploy an app for the world to see!</strong> 🥳</h2>
+</div>
+
+        
+        <details closed class="f6 fw7 input-reset">
+  <dl class="f6 lh-copy">
+    <dt class="fw7">Posted on:</dt>
+    <dd class="fw5 ml0">April 22, 2022</dd>
+  </dl>
+  <dl class="f6 lh-copy">
+    <dt class="fw7">Length:</dt>
+    <dd class="fw5 ml0">6 minute read, 1258 words</dd>
+  </dl>
+  
+  
+  
+  <dl class="f6 lh-copy">
+    <dt class="fw7">See Also:</dt>
+    
+  </dl>
+</details>
+
+      </section>
+      <footer class="post-footer">
+        <div class="post-pagination dt w-100 mt4 mb2">
+  
+  
+  
+  
+    <a class="next dtc pl2 tr v-top fw6"
+    href="/blog/2021-07-01-graph-theory/">Graph theory primer &rarr;</a>
+  
+</div>
+
+      </footer>
+    </article>
+    
+      
+<div class="post-comments pa0 pa4-l mt4">
+  
+  <script src="https://utteranc.es/client.js"
+          repo="apreshill/apero"
+          issue-term="pathname"
+          theme="boxy-light"
+          label="comments :crystal_ball:"
+          crossorigin="anonymous"
+          async
+          type="text/javascript">
+  </script>
+  
+</div>
+
+    
+  </section>
+</main>
+<footer class="site-footer pv4 bt b--transparent ph5" role="contentinfo">
+  <nav class="db dt-l w-100">
+    <p class="site-copyright f7 db dtc-l v-mid w-100 w-33-l tc tl-l pv2 pv0-l mv0 lh-copy">
+      &copy; 2022
+      <span class="middot-divider"></span>
+      Made with <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title"><a xmlns:dct="http://purl.org/dc/terms/" href="https://github.com/hugo-apero/" rel="dct:source">Hugo Apéro</a></span>.
+      <br />
+      
+Based on <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title"><a xmlns:dct="http://purl.org/dc/terms/" href="https://github.com/formspree/blogophonic-hugo" rel="dct:source">Blogophonic</a></span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://formspree.io" property="cc:attributionName" rel="cc:attributionURL">Formspree</a>.
+    </p>
+    
+    <div class="site-social-links db dtc-l v-mid w-100 w-33-l tc pv2 pv0-l mv0">
+      <div class="social-icon-links" aria-hidden="true">
+  
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="https://www.linkedin.com/in/maria-sevillano-rivera" title="linkedin" target="_blank" rel="noopener">
+      <i class="fab fa-linkedin fa-lg fa-fw"></i>
+    </a>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="https://github.com/msevi" title="github" target="_blank" rel="noopener">
+      <i class="fab fa-github fa-lg fa-fw"></i>
+    </a>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="https://orcid.org/0000-0003-0230-0624" title="orcid" target="_blank" rel="noopener">
+      <i class="ai ai-orcid fa-lg fa-fw"></i>
+    </a>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="http://scholar.google.com/citations?user=IMacHjAAAAAJ&amp;hl=en&amp;authuser=3" title="google-scholar" target="_blank" rel="noopener">
+      <i class="ai ai-google-scholar fa-lg fa-fw"></i>
+    </a>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="https://msevi.github.io/files/Sevillano_CV_2021.pdf" title="cv" target="_blank" rel="noopener">
+      <i class="ai ai-cv fa-lg fa-fw"></i>
+    </a>
+  
+</div>
+
+    </div>
+    
+    <div class="site-links f6 db dtc-l v-mid w-100 w-67-l tc tr-l pv2 pv0-l mv0">
+      
+      <a class="dib pv1 ph2 link" href="/license/" title="License">License</a>
+      
+      <a class="dib pv1 ph2 link" href="/contact/" title="Contact form">Contact</a>
+      
+    </div>
+  </nav>
+  <script src="//yihui.org/js/math-code.js" type="text/javascript"></script>
+  <script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML">  </script>
+</footer>
+      </div>
+    </body>
+</html>
